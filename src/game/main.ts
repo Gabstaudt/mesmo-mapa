@@ -10,6 +10,7 @@ import { Cinema } from './scenes/Cinema';
 import { Parents } from './scenes/Parents';
 import { Routine } from './scenes/Routine';
 import { Maturity } from './scenes/Maturity';
+import { Sports } from './scenes/Sports';
 
 const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
@@ -45,7 +46,8 @@ const config: Phaser.Types.Core.GameConfig = {
         Cinema,
         Parents,
         Routine,
-        Maturity
+        Maturity,
+        Sports
     ]
 };
 

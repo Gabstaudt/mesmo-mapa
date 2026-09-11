@@ -245,7 +245,13 @@ export class Maturity extends Phaser.Scene
             }
         }
         else if (this.state === 'dialog' && (e || (this.connected && enter))) this.advanceDialog();
-        else if (this.state === 'card' && e) this.scene.restart();
+        else if (this.state === 'card' && e)
+        {
+            this.state = 'transition';
+            this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+                () => this.scene.start('Sports'));
+            this.cameras.main.fadeOut(1200, 30, 36, 56);
+        }
     }
 
     private requestPlayerTwo ()
@@ -359,6 +365,6 @@ export class Maturity extends Phaser.Scene
         this.add.text(512, 414, 'Nem sempre concordando. Mas aprendendo a continuar juntos.', {
             fontFamily: 'Arial', fontSize: '20px', color: '#39435F', align: 'center', wordWrap: { width: 360 }
         }).setOrigin(0.5).setDepth(301);
-        this.makeText(512, 703, 'E — Rever memória', 22).setDepth(302);
+        this.makeText(512, 703, 'E — Ir para a quadra', 22).setDepth(302);
     }
 }

@@ -29,6 +29,10 @@ export class Preloader extends Scene
 
     preload ()
     {
+        this.load.image('sports-background', 'assets/scenes/sports/sports-background.png');
+        this.load.image('sports-target', 'assets/objects/sports-target.png');
+        this.load.image('sports-ball', 'assets/objects/sports-ball.png');
+        this.load.image('sports-score-panel', 'assets/ui/sports-score-panel.png');
         this.load.audio('shared-path-ambient', 'assets/audio/shared-path-ambient.wav');
         this.load.audio('player-two-chime', 'assets/audio/player-two-chime.wav');
         this.load.image('maturity-background', 'assets/scenes/maturity/maturity-background.png');
