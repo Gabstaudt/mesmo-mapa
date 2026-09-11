@@ -9,6 +9,7 @@ import { FirstMeeting } from './scenes/FirstMeeting';
 import { Cinema } from './scenes/Cinema';
 import { Parents } from './scenes/Parents';
 import { Routine } from './scenes/Routine';
+import { Maturity } from './scenes/Maturity';
 
 const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
@@ -43,7 +44,8 @@ const config: Phaser.Types.Core.GameConfig = {
         FirstMeeting,
         Cinema,
         Parents,
-        Routine
+        Routine,
+        Maturity
     ]
 };
 

@@ -29,6 +29,13 @@ export class Preloader extends Scene
 
     preload ()
     {
+        this.load.audio('shared-path-ambient', 'assets/audio/shared-path-ambient.wav');
+        this.load.audio('player-two-chime', 'assets/audio/player-two-chime.wav');
+        this.load.image('maturity-background', 'assets/scenes/maturity/maturity-background.png');
+        this.load.image('maturity-barrier', 'assets/objects/maturity-barrier-left.png');
+        this.load.image('maturity-switch', 'assets/objects/maturity-switch.png');
+        this.load.image('gabriella-left', 'assets/characters/gabriella-left.png');
+        this.load.image('gabriella-back', 'assets/characters/gabriella-back.png');
         this.load.image('routine-ready', 'assets/scenes/routine/getting-ready-background.png');
         this.load.image('routine-choice', 'assets/scenes/routine/food-choice-background.png');
         // Fundo do cotidiano disponível com este nome no projeto.

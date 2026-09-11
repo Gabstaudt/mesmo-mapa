@@ -2,12 +2,13 @@ import * as Phaser from 'phaser';
 import { routineDialogues as script, type RoutineLine } from '../data/routineDialogues';
 
 type Stage = 'ready' | 'choice' | 'everyday';
-type State = 'transition' | 'explore' | 'select' | 'dialog' | 'pause' | 'card' | 'complete';
+type State = 'transition' | 'explore' | 'select' | 'dialog' | 'pause' | 'card';
 type Point = { id: string; label: string; image: Phaser.GameObjects.Image; x: number; y: number;
     lines: RoutineLine[]; marker: Phaser.GameObjects.Text };
 
 export class Routine extends Phaser.Scene
 {
+    private music!: Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound;
     private stage: Stage = 'ready';
     private state: State = 'transition';
     private background!: Phaser.GameObjects.Image;
@@ -48,6 +49,9 @@ export class Routine extends Phaser.Scene
     create ()
     {
         const { width, height } = this.scale;
+        this.music = this.sound.add('shared-path-ambient', { loop: true, volume: 0.10 }) as Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound;
+        this.music.play();
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.music.destroy());
         this.stage = 'ready';
         this.state = 'transition';
         this.points = [];
@@ -156,7 +160,8 @@ export class Routine extends Phaser.Scene
             this.prompt.setVisible(!!point);
             if (point && advance)
             {
-                // Não há trilha carregada atualmente; escurecimento sutil destaca a fotografia.
+                // A fotografia desacelera o clima sem alterar o ritmo dos controles.
+                if (this.stage === 'everyday' && point.id === 'photo') this.music.setVolume(0.025);
                 this.shade.setVisible(this.stage === 'everyday' && point.id === 'photo');
                 this.startDialog(point.lines, () => this.collectPoint(point));
             }
@@ -193,7 +198,6 @@ export class Routine extends Phaser.Scene
             this.shade.setVisible(false);
             this.startDialog(script.ending, () => this.finishRoutine());
         }
-        else if (this.state === 'complete' && advance) this.scene.restart();
     }
 
     private collectPoint (point: Point)
@@ -212,6 +216,7 @@ export class Routine extends Phaser.Scene
         }
         this.time.delayedCall(this.stage === 'everyday' ? 1300 : 500, () => {
             this.feedback.setVisible(false);
+            this.music.setVolume(0.10);
             this.shade.setVisible(false);
             if (this.visited.size < this.points.length) { this.state = 'explore'; return; }
             if (this.stage === 'ready')
@@ -363,6 +368,7 @@ export class Routine extends Phaser.Scene
 
     private showCard ()
     {
+        this.music.setVolume(0.04);
         this.state = 'card';
         this.hud.setVisible(false);
         this.shade.setVisible(true);
@@ -370,7 +376,7 @@ export class Routine extends Phaser.Scene
         const title = this.add.text(512, 364, 'O cotidiano', { fontFamily: 'Arial', fontSize: '26px',
             color: '#1E2438', fontStyle: 'bold' }).setOrigin(0.5);
         const subtitle = this.add.text(512, 414, 'Foi no meio das coisas pequenas que vocês começaram a construir uma vida juntos.', {
-            fontFamily: 'Arial', fontSize: '20px', color: '#39435F', align: 'center', wordWrap: { width: 420 }
+            fontFamily: 'Arial', fontSize: '20px', color: '#39435F', align: 'center', wordWrap: { width: 360 }
         }).setOrigin(0.5);
         const hint = this.add.text(512, 703, 'E — Continuar', { fontFamily: 'Arial', fontSize: '22px', color: '#F4EBDD',
             backgroundColor: '#1E2438', padding: { x: 12, y: 8 } }).setOrigin(0.5);
@@ -380,14 +386,8 @@ export class Routine extends Phaser.Scene
     private finishRoutine ()
     {
         this.state = 'transition';
-        this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-            // Encerramento provisório, sem tentar abrir uma fase inexistente.
-            this.feedback.setPosition(512, 360).setText('O cotidiano\nE — Rever estas memórias').setVisible(true);
-            this.feedback.setScrollFactor(0);
-            this.cameras.main.resetFX();
-            this.shade.setAlpha(1).setFillStyle(0x1E2438, 1).setVisible(true);
-            this.state = 'complete';
-        });
+        this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+            () => this.scene.start('Maturity'));
         this.cameras.main.fadeOut(1200, 30, 36, 56);
     }
 }
