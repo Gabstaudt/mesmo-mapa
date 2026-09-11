@@ -68,6 +68,24 @@ this.load.image(
     'instagram-background',
     'assets/scenes/instagram/instagram-background.png'
 );
+this.load.image(
+    'instagram-background',
+    'assets/scenes/instagram/instagram-background.png'
+);
+
+this.load.image(
+    'gabriella-portrait',
+    'assets/portraits/gabriella-happy.png'
+);
+
+this.load.image(
+    'lucas-portrait',
+    'assets/portraits/lucas-happy.png'
+);
+this.load.image(
+    'memory-card',
+    'assets/ui/memory-unlocked.png'
+);
     }
 
     create ()
