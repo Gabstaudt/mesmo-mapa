@@ -10,6 +10,7 @@ import { Cinema } from './scenes/Cinema';
 import { Parents } from './scenes/Parents';
 import { Routine } from './scenes/Routine';
 import { Maturity } from './scenes/Maturity';
+import { TacticalCoop } from './scenes/TacticalCoop';
 import { Sports } from './scenes/Sports';
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -47,7 +48,8 @@ const config: Phaser.Types.Core.GameConfig = {
         Parents,
         Routine,
         Maturity,
-        Sports
+        Sports,
+        TacticalCoop
     ]
 };
 

@@ -165,7 +165,12 @@ export class Sports extends Phaser.Scene
             if (e || enter) { this.round++; this.player = 0; this.shade.setVisible(false); this.beginTurn(); }
             else if (space) { this.shade.setVisible(false); this.afterCompetition(); }
         }
-        else if (this.state === 'card' && e) this.scene.restart();
+        else if (this.state === 'card' && e)
+        {
+            this.state = 'transition';
+            this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => this.scene.start('TacticalCoop'));
+            this.cameras.main.fadeOut(400, 30, 36, 56);
+        }
     }
 
     private playerName () { return this.player === 0 ? 'PLAYER 1 — LUCAS' : 'PLAYER 2 — GABRIELLA'; }
@@ -326,6 +331,6 @@ export class Sports extends Phaser.Scene
             fontStyle: 'bold' }).setOrigin(0.5).setDepth(301);
         this.add.text(512, 414, 'Porque com vocês, até brincadeira vira campeonato.', { fontFamily: 'Arial', fontSize: '20px',
             color: '#39435F', align: 'center', wordWrap: { width: 360 } }).setOrigin(0.5).setDepth(301);
-        this.text(512, 703, 'E — Jogar de novo', 22).setDepth(302);
+        this.text(512, 703, 'E — Continuar', 22).setDepth(302);
     }
 }

@@ -29,6 +29,9 @@ export class Preloader extends Scene
 
     preload ()
     {
+        this.load.image('tactical-background', 'assets/scenes/tactical/tactical-background.png');
+        this.load.image('tactical-objective-panel', 'assets/ui/tactical-objective-panel.png');
+        this.load.image('tactical-finish-zone', 'assets/objects/tactical-finish-zone.png .png');
         this.load.image('sports-background', 'assets/scenes/sports/sports-background.png');
         this.load.image('sports-target', 'assets/objects/sports-target.png');
         this.load.image('sports-ball', 'assets/objects/sports-ball.png');
