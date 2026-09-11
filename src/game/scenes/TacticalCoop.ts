@@ -125,7 +125,12 @@ export class TacticalCoop extends Phaser.Scene
             this.shade.setVisible(false); this.joinPanel.setVisible(false); this.players[1].setAlpha(1);
             this.sound.play('player-two-chime', { volume: 0.25 }); this.state = 'play'; return;
         }
-        if (this.state === 'card' && e) { this.scene.restart(); return; }
+        if (this.state === 'card' && e)
+        {
+            this.state = 'transition';
+            this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => this.scene.start('Concert'));
+            this.cameras.main.fadeOut(900, 30, 36, 56); return;
+        }
         if (this.state !== 'play') return;
         this.movePlayer(0, delta); this.movePlayer(1, delta);
         this.hint.setText('Lucas: WASD + E • Gabriella: SETAS + ENTER');
@@ -317,6 +322,6 @@ export class TacticalCoop extends Phaser.Scene
         this.add.text(512, 414, 'Algumas fases só fazem sentido quando os dois chegam juntos.', {
             fontFamily: 'Arial', fontSize: '20px', color: '#39435F', align: 'center', wordWrap: { width: 360 }
         }).setOrigin(0.5).setDepth(301);
-        this.label(512, 703, 'E — Jogar de novo', 22).setDepth(302);
+        this.label(512, 703, 'E — Continuar', 22).setDepth(302);
     }
 }

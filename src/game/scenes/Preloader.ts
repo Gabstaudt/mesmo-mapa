@@ -29,6 +29,13 @@ export class Preloader extends Scene
 
     preload ()
     {
+        this.load.image('concert-crowd', 'assets/scenes/concert/pagode-crowd-background.png');
+        this.load.image('concert-stage', 'assets/scenes/concert/pagode-stage-background.png');
+        this.load.image('concert-ticket', 'assets/objects/concert-ticket.png');
+        this.load.image('concert-photo', 'assets/objects/concert-memory-photo.png');
+        this.load.image('rhythm-note', 'assets/ui/rhythm-note.png');
+        this.load.image('rhythm-hit-zone', 'assets/ui/rhythm-hit-zone.png');
+        this.load.audio('concert-groove', 'assets/audio/concert-groove.wav');
         this.load.image('tactical-background', 'assets/scenes/tactical/tactical-background.png');
         this.load.image('tactical-objective-panel', 'assets/ui/tactical-objective-panel.png');
         this.load.image('tactical-finish-zone', 'assets/objects/tactical-finish-zone.png .png');
