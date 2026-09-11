@@ -10,3 +10,6 @@ Formato: WAV mono PCM de 16 bits, 22.050 Hz.
 com percussão sintetizada, baixo senoidal e acordes curtos. Não reproduz músicas de
 Grupo Revelação ou Sorriso Maroto. O minigame usa o mesmo pulso de 625 ms.
 Gerador reproduzível: `python3 scripts/generate-concert-audio.py`.
+
+`travel-water.wav`: ambiente original de água, sintetizado com ruído filtrado e
+variação lenta de amplitude (12 segundos). Gerador: `python3 scripts/generate-travel-audio.py`.

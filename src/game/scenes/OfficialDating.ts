@@ -94,7 +94,12 @@ export class OfficialDating extends Phaser.Scene
                 this.updateObjective(); this.state = 'explore';
             }); return;
         }
-        if (this.state === 'card' && e) { this.scene.start('MainMenu'); return; }
+        if (this.state === 'card' && e)
+        {
+            this.state = 'transition';
+            this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => this.scene.start('SantaCatarina'));
+            this.cameras.main.fadeOut(1000, 30, 36, 56); return;
+        }
         if (this.state !== 'explore') return;
         this.move(delta);
         // Pontos de interação no chão, em frente aos móveis onde estão os objetos.
@@ -243,6 +248,6 @@ export class OfficialDating extends Phaser.Scene
         this.add.text(512, 414, 'O sentimento já existia. Só faltava colocar nome.', {
             fontFamily: 'Arial', fontSize: '20px', color: '#39435F', align: 'center', wordWrap: { width: 360 }
         }).setOrigin(0.5).setDepth(301);
-        this.label(512, 703, 'E — Voltar ao menu', 22).setDepth(302);
+        this.label(512, 703, 'E — Continuar', 22).setDepth(302);
     }
 }

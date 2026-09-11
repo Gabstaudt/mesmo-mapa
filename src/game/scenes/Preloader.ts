@@ -29,6 +29,26 @@ export class Preloader extends Scene
 
     preload ()
     {
+        for (const [key, file] of Object.entries({
+            airport: 'airport', family: 'family-house', baptism: 'baptism', sleep: 'sleep-together', falls: 'iguacu'
+        })) this.load.image(`travel-${key}`, `assets/scenes/travel/${file}-background.png`);
+        for (const name of ['travel-photo', 'travel-suitcase', 'travel-ticket', 'airplane-window'])
+            this.load.image(name, `assets/objects/${name}.png`);
+        this.load.image('godson-memory', 'assets/objects/godson-memory-object.png');
+        this.load.image('travel-route', 'assets/ui/travel-route-panel.png  .png');
+        this.load.audio('travel-water', 'assets/audio/travel-water.wav');
+        this.load.image('final-wall', 'assets/scenes/final/final-memory-wall-background.png');
+        this.load.image('final-future-map', 'assets/scenes/final/future-map-background.png');
+        this.load.image('future-home', 'assets/objects/future-home-card.png');
+        this.load.image('future-wedding', 'assets/objects/future-wedding-card.png');
+        this.load.image('future-machu', 'assets/objects/future-machu-picchu-card.png');
+        this.load.image('future-san', 'assets/objects/future-san-andres-card.png');
+        this.load.image('future-locked', 'assets/ui/future-locked-frame.png');
+        this.load.image('final-symbol', 'assets/objects/final-connection-symbol.png');
+        this.load.image('final-message', 'assets/ui/final-message-panel.png');
+        this.load.image('final-continue', 'assets/ui/final-continue-card.png');
+        this.load.image('couple-key-art', 'assets/couple/couple-key-art.png');
+        this.load.image('travel-paraguay', 'assets/scenes/travel/paraguay-background.png');
         this.load.image('official-background', 'assets/scenes/official/official-request-background.png');
         this.load.image('official-note', 'assets/objects/official-note.png');
         this.load.image('gabriella-ring', 'assets/portraits/gabriella-ring.png');

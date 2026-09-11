@@ -10,6 +10,8 @@ import { Cinema } from './scenes/Cinema';
 import { Parents } from './scenes/Parents';
 import { Routine } from './scenes/Routine';
 import { Maturity } from './scenes/Maturity';
+import { Finale } from './scenes/Finale';
+import { SantaCatarina } from './scenes/SantaCatarina';
 import { OfficialDating } from './scenes/OfficialDating';
 import { Concert } from './scenes/Concert';
 import { TacticalCoop } from './scenes/TacticalCoop';
@@ -53,7 +55,9 @@ const config: Phaser.Types.Core.GameConfig = {
         Sports,
         TacticalCoop,
         Concert,
-        OfficialDating
+        OfficialDating,
+        SantaCatarina,
+        Finale
     ]
 };
 

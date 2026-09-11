@@ -12,7 +12,9 @@ const chapters = [
     { scene: 'Sports', title: 'Esportes', subtitle: 'Valendo Nada' },
     { scene: 'TacticalCoop', title: 'Cooperação', subtitle: 'Dupla Fechada' },
     { scene: 'Concert', title: 'Shows', subtitle: 'Nossa trilha' },
-    { scene: 'OfficialDating', title: 'Pedido de namoro', subtitle: 'Finalmente Oficial' }
+    { scene: 'OfficialDating', title: 'Pedido de namoro', subtitle: 'Finalmente Oficial' },
+    { scene: 'SantaCatarina', title: 'Santa Catarina', subtitle: 'O mesmo lugar' },
+    { scene: 'Finale', title: 'Capítulo final', subtitle: 'O mapa continua' }
 ];
 
 export class MainMenu extends Phaser.Scene
@@ -31,15 +33,15 @@ export class MainMenu extends Phaser.Scene
 
         chapters.forEach((chapter, index) => {
             const x = index % 2 === 0 ? 302 : 722;
-            const y = 210 + Math.floor(index / 2) * 82;
-            const button = this.add.rectangle(x, y, 390, 72, 0x39435F)
+            const y = 210 + Math.floor(index / 2) * 70;
+            const button = this.add.rectangle(x, y, 390, 62, 0x39435F)
                 .setStrokeStyle(1, 0xD8B36A, 0.5)
                 .setInteractive({ useHandCursor: true });
-            this.add.text(x - 173, y - 23, `${String(index + 1).padStart(2, '0')}  ${chapter.title}`, {
-                fontFamily: 'Arial', fontSize: '22px', color: '#F4EBDD', fontStyle: 'bold'
+            this.add.text(x - 173, y - 22, `${String(index + 1).padStart(2, '0')}  ${chapter.title}`, {
+                fontFamily: 'Arial', fontSize: '20px', color: '#F4EBDD', fontStyle: 'bold'
             });
             this.add.text(x - 173, y + 8, chapter.subtitle, {
-                fontFamily: 'Arial', fontSize: '18px', color: '#E7A98F'
+                fontFamily: 'Arial', fontSize: '17px', color: '#E7A98F'
             });
             button.on('pointerover', () => button.setStrokeStyle(2, 0xD8B36A));
             button.on('pointerout', () => button.setStrokeStyle(1, 0xD8B36A, 0.5));
