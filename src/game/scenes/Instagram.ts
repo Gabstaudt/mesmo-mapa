@@ -1,10 +1,10 @@
 import * as Phaser from 'phaser';
 
 type StoryStep = {
-    type: 'narration' | 'thought' | 'message';
     speaker: 'Narrador' | 'Gabriella' | 'Lucas';
     text: string;
     portrait?: 'gabriella' | 'lucas';
+    pauseAfter?: number;
 };
 
 export class Instagram extends Phaser.Scene
@@ -30,35 +30,31 @@ export class Instagram extends Phaser.Scene
 
     private memoryVisible = false;
     private isTransitioning = false;
+    private isPausing = false;
+    private pauseEvent?: Phaser.Time.TimerEvent;
+    private textPages: string[] = [];
+    private pageIndex = 0;
 
-    private storySteps: StoryStep[] = [
-        {
-            type: 'narration',
-            speaker: 'Narrador',
-            text: 'Foi justamente quando a distância apareceu que a conversa começou.'
-        },
-        {
-            type: 'message',
-            speaker: 'Lucas',
-            text: 'E foi pelo Instagram que vocês finalmente começaram a se falar de verdade.'
-        },
-        {
-            type: 'thought',
-            speaker: 'Gabriella',
-            text: 'Engraçado pensar que a gente se via há tanto tempo e só agora começava a conversar.',
-            portrait: 'gabriella'
-        },
-        {
-            type: 'message',
-            speaker: 'Gabriella',
-            text: 'Eu estava indo para Santa Catarina e passaria três meses lá.'
-        },
-        {
-            type: 'thought',
-            speaker: 'Lucas',
-            text: 'Talvez nenhum dos dois soubesse ainda o quanto aquela conversa ia mudar tudo.',
-            portrait: 'lucas'
-        }
+    // Roteiro fornecido por Gabriella: falas narrativas do jogo, não mensagens do Instagram.
+    private readonly storySteps: StoryStep[] = [
+        { speaker: 'Narrador', text: 'Engraçado como algumas histórias começam.' },
+        { speaker: 'Narrador', text: 'Vocês estavam na mesma cidade havia anos.' },
+        { speaker: 'Narrador', text: 'Mas foi quando Gabriella estava indo passar três meses em Santa Catarina que vocês finalmente começaram a conversar.' },
+        { speaker: 'Gabriella', text: 'Claro.', portrait: 'gabriella' },
+        { speaker: 'Gabriella', text: 'Tinha que ser justo agora.', portrait: 'gabriella' },
+        { speaker: 'Lucas', text: 'Pelo menos agora a gente tem motivo pra conversar.', portrait: 'lucas' },
+        { speaker: 'Gabriella', text: 'Motivo?', portrait: 'gabriella' },
+        { speaker: 'Gabriella', text: 'Eu falo até sem motivo.', portrait: 'gabriella' },
+        { speaker: 'Lucas', text: 'Eu percebi.', portrait: 'lucas' },
+        { speaker: 'Gabriella', text: 'KKKKKKKK', portrait: 'gabriella' },
+        { speaker: 'Narrador', text: 'A distância que deveria separar acabou fazendo o contrário.' },
+        { speaker: 'Narrador', text: 'Um assunto puxava outro.' },
+        { speaker: 'Narrador', text: 'E outro.' },
+        { speaker: 'Narrador', text: 'E quando perceberam, conversar já fazia parte do dia.' },
+        { speaker: 'Narrador', text: 'Sono. Estudo. Família. Comida. Academia. Coisas importantes.', pauseAfter: 900 },
+        { speaker: 'Narrador', text: 'E um monte de coisa completamente inútil também.' },
+        { speaker: 'Gabriella', text: 'Acho que a gente vai se dar bem.', portrait: 'gabriella' },
+        { speaker: 'Lucas', text: 'Eu também acho.', portrait: 'lucas' },
     ];
 
     constructor ()
@@ -71,6 +67,14 @@ export class Instagram extends Phaser.Scene
         this.stepIndex = 0;
         this.memoryVisible = false;
         this.isTransitioning = false;
+        this.isPausing = false;
+        this.isTyping = false;
+        this.textPages = [];
+        this.pageIndex = 0;
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            this.typingEvent?.remove(false);
+            this.pauseEvent?.remove(false);
+        });
         const { width, height } = this.scale;
 
         // -------------------------
@@ -181,7 +185,7 @@ export class Instagram extends Phaser.Scene
         this.memoryTitle = this.add.text(
             width / 2,
             height / 2 - 20,
-            'Nova memória',
+            'A conversa começou',
             {
                 fontFamily: 'Arial',
                 fontSize: '26px',
@@ -197,7 +201,7 @@ export class Instagram extends Phaser.Scene
         this.memorySubtitle = this.add.text(
             width / 2,
             height / 2 + 30,
-            'Foi aqui que a conversa começou.',
+            'Foi preciso ficar longe para começar a ficar perto.',
             {
                 fontFamily: 'Arial',
                 fontSize: '20px',
@@ -225,7 +229,8 @@ export class Instagram extends Phaser.Scene
 
     update ()
     {
-        if (this.isTransitioning || !Phaser.Input.Keyboard.JustDown(this.advanceKey))
+        const advance = Phaser.Input.Keyboard.JustDown(this.advanceKey);
+        if (this.isTransitioning || this.isPausing || !advance)
         {
             return;
         }
@@ -246,7 +251,22 @@ export class Instagram extends Phaser.Scene
             return;
         }
 
-        // Caso contrário, próxima fala
+        if (this.pageIndex + 1 < this.textPages.length)
+        {
+            this.startTyping(this.textPages[++this.pageIndex]);
+            return;
+        }
+
+        const pause = this.storySteps[this.stepIndex].pauseAfter;
+        if (pause)
+        {
+            this.isPausing = true;
+            this.pauseEvent = this.time.delayedCall(pause, () => {
+                this.isPausing = false;
+                this.nextStep();
+            });
+            return;
+        }
         this.nextStep();
     }
 
@@ -271,7 +291,15 @@ export class Instagram extends Phaser.Scene
             this.lucasPortrait.setVisible(true);
         }
 
-        this.startTyping(currentStep.text);
+        // Frases longas continuam em outra página, sem reduzir a fonte aprovada.
+        const wrapped = this.dialogText.getWrappedText(currentStep.text);
+        this.textPages = [];
+        for (let index = 0; index < wrapped.length; index += 2)
+        {
+            this.textPages.push(wrapped.slice(index, index + 2).join(' '));
+        }
+        this.pageIndex = 0;
+        this.startTyping(this.textPages[0]);
     }
 
     private startTyping (text: string)

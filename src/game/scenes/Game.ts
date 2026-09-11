@@ -24,25 +24,27 @@ export class Game extends Phaser.Scene
     private isDialogOpen = false;
     private dialogIndex = 0;
     private isTransitioning = false;
+    private isOptionalDialog = false;
+    private isPausing = false;
+    private pauseEvent?: Phaser.Time.TimerEvent;
+    private schoolObject!: Phaser.GameObjects.Zone;
+    private activeLines: { speaker: string; text: string }[] = [];
+    private readonly objectLines = [
+        { speaker: 'Narrador', text: 'Vocês já dividiam corredores, horários e lugares.' },
+        { speaker: 'Narrador', text: 'Só ainda não dividiam a vida.' }
+    ];
 
     // Controle do efeito de digitação
     private isTyping = false;
     private typingEvent?: Phaser.Time.TimerEvent;
     private currentFullText = '';
 
-    private dialogLines = [
-        {
-            speaker: 'Narrador',
-            text: 'Vocês já se conheciam de vista.'
-        },
-        {
-            speaker: 'Narrador',
-            text: 'Mas ainda não sabiam o que esse caminho ia virar.'
-        },
-        {
-            speaker: 'Lucas',
-            text: 'Talvez eu já tivesse reparado em você antes do que admitiria.'
-        }
+    private readonly dialogLines = [
+        { speaker: 'Narrador', text: 'Vocês já se conheciam de vista.' },
+        { speaker: 'Narrador', text: 'Talvez tenham cruzado o caminho um do outro mais vezes do que conseguem lembrar.' },
+        { speaker: 'Narrador', text: 'Mas naquela época, era só isso.' },
+        { speaker: 'Narrador', text: 'Duas pessoas no mesmo mapa.' },
+        { speaker: 'Narrador', text: 'Sem fazer ideia de que um dia seria difícil imaginar um caminho sem o outro.' }
     ];
 
     constructor ()
@@ -53,6 +55,19 @@ export class Game extends Phaser.Scene
     create ()
     {
         const { width, height } = this.scale;
+        this.isDialogOpen = false;
+        this.isTransitioning = false;
+        this.isOptionalDialog = false;
+        this.isPausing = false;
+        this.isTyping = false;
+        this.dialogIndex = 0;
+        this.activeLines = this.dialogLines;
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            this.typingEvent?.remove(false);
+            this.pauseEvent?.remove(false);
+        });
+        // Interação com o banco já desenhado à direita do cenário.
+        this.schoolObject = this.add.zone(width * 0.88, height * 0.70, 160, 100);
 
         // -------------------------
         // CENÁRIO
@@ -190,6 +205,7 @@ export class Game extends Phaser.Scene
     update ()
     {
         const speed = 220;
+        const interact = Phaser.Input.Keyboard.JustDown(this.interactKey);
 
         // -------------------------
         // DURANTE A TRANSIÇÃO
@@ -209,7 +225,7 @@ export class Game extends Phaser.Scene
         {
             this.lucas.setVelocity(0);
 
-            if (Phaser.Input.Keyboard.JustDown(this.interactKey))
+            if (interact && !this.isPausing)
             {
                 // Se ainda está escrevendo:
                 // E mostra toda a frase imediatamente
@@ -292,37 +308,33 @@ export class Game extends Phaser.Scene
             this.gabriella.y
         );
 
-        if (distance < 140)
-        {
-            this.promptBackground.setVisible(true);
-            this.promptText.setVisible(true);
-        }
-        else
-        {
-            this.promptBackground.setVisible(false);
-            this.promptText.setVisible(false);
-        }
-
-        // -------------------------
-        // INICIA O DIÁLOGO
-        // -------------------------
-
-        if (
-            distance < 120 &&
-            Phaser.Input.Keyboard.JustDown(this.interactKey)
-        )
+        // A presença de Gabriella dispara a observação, sem interação direta.
+        if (distance < 120)
         {
             this.openDialog();
+            return;
         }
+
+        const objectDistance = Phaser.Math.Distance.Between(
+            this.lucas.x, this.lucas.y, this.schoolObject.x, this.schoolObject.y
+        );
+        const nearObject = objectDistance < 120;
+        this.promptBackground.setVisible(nearObject);
+        this.promptText.setVisible(nearObject);
+        this.promptText.setText('E — Observar o banco');
+        if (nearObject && interact) this.openDialog(true);
     }
 
     // -------------------------
     // ABRIR DIÁLOGO
     // -------------------------
 
-    private openDialog ()
+    private openDialog (optional = false)
     {
         this.isDialogOpen = true;
+        this.lucas.setVelocity(0);
+        this.isOptionalDialog = optional;
+        this.activeLines = optional ? this.objectLines : this.dialogLines;
         this.dialogIndex = 0;
 
         this.promptBackground.setVisible(false);
@@ -341,7 +353,7 @@ export class Game extends Phaser.Scene
 
     private showCurrentLine ()
     {
-        const currentLine = this.dialogLines[this.dialogIndex];
+        const currentLine = this.activeLines[this.dialogIndex];
 
         this.dialogName.setText(currentLine.speaker);
 
@@ -408,9 +420,21 @@ export class Game extends Phaser.Scene
 
     private advanceDialog ()
     {
+        // Deixa “Duas pessoas no mesmo mapa.” respirar antes da última frase.
+        if (!this.isOptionalDialog && this.dialogIndex === 3)
+        {
+            this.isPausing = true;
+            this.pauseEvent = this.time.delayedCall(900, () => {
+                this.isPausing = false;
+                this.dialogIndex++;
+                this.showCurrentLine();
+            });
+            return;
+        }
+
         this.dialogIndex++;
 
-        if (this.dialogIndex >= this.dialogLines.length)
+        if (this.dialogIndex >= this.activeLines.length)
         {
             this.closeDialog();
             return;
@@ -439,7 +463,7 @@ export class Game extends Phaser.Scene
 
         // A escola terminou.
         // Começa a passagem para a próxima memória.
-        this.startTransition();
+        if (!this.isOptionalDialog) this.startTransition();
     }
 
     // -------------------------
