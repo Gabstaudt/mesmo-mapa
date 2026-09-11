@@ -127,7 +127,12 @@ export class Concert extends Phaser.Scene
             this.startDialog(script.like, () => this.beginBlock(1)); return;
         }
         if (this.state === 'rhythm') { this.updateRhythm(delta, e, enter); return; }
-        if (this.state === 'card' && e) { this.scene.restart(); return; }
+        if (this.state === 'card' && e)
+        {
+            this.state = 'transition';
+            this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => this.scene.start('OfficialDating'));
+            this.cameras.main.fadeOut(1100, 30, 36, 56); return;
+        }
         if (this.state !== 'explore') return;
         const dx = Number(this.keys.D.isDown) - Number(this.keys.A.isDown);
         const dy = Number(this.keys.S.isDown) - Number(this.keys.W.isDown);
@@ -362,6 +367,6 @@ export class Concert extends Phaser.Scene
         this.add.text(512, 414, 'Tem música que eu não escuto mais sozinha. Eu escuto e lembro da gente.', {
             fontFamily: 'Arial', fontSize: '20px', color: '#39435F', align: 'center', wordWrap: { width: 360 }
         }).setOrigin(0.5).setDepth(301);
-        this.label(512, 703, 'E — Reviver essa memória', 22).setDepth(302);
+        this.label(512, 703, 'E — Continuar', 22).setDepth(302);
     }
 }

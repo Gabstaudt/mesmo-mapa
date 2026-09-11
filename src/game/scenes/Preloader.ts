@@ -29,6 +29,11 @@ export class Preloader extends Scene
 
     preload ()
     {
+        this.load.image('official-background', 'assets/scenes/official/official-request-background.png');
+        this.load.image('official-note', 'assets/objects/official-note.png');
+        this.load.image('gabriella-ring', 'assets/portraits/gabriella-ring.png');
+        this.load.image('lucas-ring', 'assets/portraits/lucas-ring.png');
+        this.load.image('official-ring', 'assets/objects/official-ring.png');
         this.load.image('concert-crowd', 'assets/scenes/concert/pagode-crowd-background.png');
         this.load.image('concert-stage', 'assets/scenes/concert/pagode-stage-background.png');
         this.load.image('concert-ticket', 'assets/objects/concert-ticket.png');
