@@ -53,6 +53,11 @@ export class Preloader extends Scene
             'gabriella-front',
             'assets/characters/gabriella-front.png'
             );
+
+            this.load.image(
+    'interaction-prompt',
+    'assets/ui/interaction-prompt.png'
+);
     }
 
     create ()
