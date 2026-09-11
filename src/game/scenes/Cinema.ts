@@ -1,34 +1,72 @@
 import * as Phaser from 'phaser';
 
-type Line = { speaker: 'Narrador' | 'Gabriella' | 'Lucas'; text: string; portrait?: string };
-type CinemaState = 'transition' | 'lobby' | 'dialog' | 'checkpoint' | 'memory';
+type Line = { speaker: 'Narrador' | 'Gabriella' | 'Lucas'; text: string; portrait?: string; pauseAfter?: number };
+type CinemaState = 'transition' | 'lobby' | 'dialog' | 'pause' | 'checkpoint' | 'memory';
 
-// Dramatização editável para o jogo, não uma transcrição do primeiro passeio.
-// Filme, data, cinema e acontecimentos específicos aguardam o relato de Gabriella.
-const conversations: Record<'intro' | 'ticket' | 'popcorn' | 'room', Line[]> = {
+// Roteiro fornecido por Gabriella; dramatização do jogo, não uma transcrição real.
+const conversations: Record<'intro' | 'ticket' | 'popcorn' | 'beforeRoom' | 'room', Line[]> = {
     intro: [
-        { speaker: 'Narrador', text: 'O primeiro passeio de vocês juntos foi ao cinema.' },
-        { speaker: 'Gabriella', text: 'Cinema com você… gostei desse programa.', portrait: 'gabriella-portrait' },
-        { speaker: 'Lucas', text: 'Então vamos aproveitar. Por onde a gente começa?', portrait: 'lucas-portrait' }
+        { speaker: 'Narrador', text: 'Primeiro encontro fora de casa.' },
+        { speaker: 'Narrador', text: 'Ou, como eles provavelmente chamariam…' },
+        { speaker: 'Gabriella', text: 'Só um cinema.', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Claro.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Super casual.', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Com você? Nunca.', portrait: 'lucas-portrait' },
     ],
     ticket: [
-        { speaker: 'Lucas', text: 'Dois ingressos. Agora é achar nossos lugares.', portrait: 'lucas-portrait' },
-        { speaker: 'Gabriella', text: 'Desde que o seu seja do lado do meu.', portrait: 'gabriella-romantic' },
-        { speaker: 'Lucas', text: 'Essa parte eu faço questão.', portrait: 'lucas-romantic' }
+        { speaker: 'Gabriella', text: 'Tu trouxe o ingresso?', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Trouxe.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Tem certeza?', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Gabriella.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Só conferindo.', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Você perguntou três vezes.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Agora são quatro.', portrait: 'gabriella-portrait' },
     ],
     popcorn: [
-        { speaker: 'Gabriella', text: 'Só pra combinar: dividir pipoca não é uma competição.', portrait: 'gabriella-portrait' },
-        { speaker: 'Lucas', text: 'Você tá avisando a mim ou a você mesma?', portrait: 'lucas-portrait' },
-        { speaker: 'Gabriella', text: 'Aos dois. Mas eu fico com o balde.', portrait: 'gabriella-portrait' },
-        { speaker: 'Lucas', text: 'Tá bom. Só deixa umas pra mim até o filme começar.', portrait: 'lucas-portrait' }
+        { speaker: 'Gabriella', text: 'Pipoca?', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Óbvio.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Grande?', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Você vai dizer que não quer e comer metade.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Mentira.', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Tá.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Talvez.', portrait: 'gabriella-portrait' },
+    ],
+    beforeRoom: [
+        { speaker: 'Narrador', text: 'Parecia só um passeio.' },
+        { speaker: 'Narrador', text: 'Mas aos poucos, qualquer lugar começava a ficar mais importante quando os dois estavam juntos.' },
+        { speaker: 'Gabriella', text: 'E olha…', portrait: 'gabriella-portrait' },
+        { speaker: 'Gabriella', text: 'No cinema ninguém vê nada.', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Isso era pra me tranquilizar?', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Não.', portrait: 'gabriella-portrait' },
     ],
     room: [
-        { speaker: 'Gabriella', text: 'Pronto. Agora tenta prestar atenção no filme.', portrait: 'gabriella-portrait' },
-        { speaker: 'Lucas', text: 'Eu tô quietinho. Você que tá puxando assunto.', portrait: 'lucas-portrait' },
-        { speaker: 'Gabriella', text: 'É que eu tô gostando de estar aqui com você.', portrait: 'gabriella-romantic' },
-        { speaker: 'Lucas', text: 'Eu também. Pode puxar assunto mais um pouquinho.', portrait: 'lucas-romantic' },
-        { speaker: 'Narrador', text: 'O primeiro passeio juntos ganhou um lugar na história de vocês.' }
-    ]
+        { speaker: 'Narrador', text: 'As luzes apagaram.' },
+        { speaker: 'Narrador', text: 'E, pela primeira vez naquela noite, Gabriella ficou quieta.', pauseAfter: 1000 },
+        { speaker: 'Lucas', text: 'Milagre.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Eu ouvi.', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Era pra ouvir.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Me dá.', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Tem do teu lado.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Quero essa.', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'É a mesma pipoca.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Não é.', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Como não?', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Essa é melhor.', portrait: 'gabriella-portrait', pauseAfter: 1600 },
+        { speaker: 'Narrador', text: 'O filme continuava.' },
+        { speaker: 'Narrador', text: 'Mas algumas memórias não ficam por causa do que estava na tela.' },
+        { speaker: 'Narrador', text: 'Ficam por causa de quem estava sentado do lado.' },
+        { speaker: 'Gabriella', text: 'Tá gostando?', portrait: 'gabriella-romantic' },
+        { speaker: 'Lucas', text: 'Do filme?', portrait: 'lucas-romantic' },
+        { speaker: 'Gabriella', text: 'É.', portrait: 'gabriella-romantic', pauseAfter: 900 },
+        { speaker: 'Lucas', text: 'Também.', portrait: 'lucas-romantic' },
+        { speaker: 'Gabriella', text: 'Também o quê?', portrait: 'gabriella-romantic' },
+        { speaker: 'Lucas', text: 'Nada.', portrait: 'lucas-romantic' },
+        { speaker: 'Gabriella', text: 'Lucas.', portrait: 'gabriella-romantic' },
+        { speaker: 'Lucas', text: 'Assiste o filme.', portrait: 'lucas-romantic' },
+        { speaker: 'Gabriella', text: 'Covarde.', portrait: 'gabriella-romantic' },
+        { speaker: 'Narrador', text: 'Foi só um cinema.', pauseAfter: 1000 },
+        { speaker: 'Narrador', text: 'Só que algumas coisas começam exatamente assim.' },
+    ],
 };
 
 export class Cinema extends Phaser.Scene
@@ -40,14 +78,19 @@ export class Cinema extends Phaser.Scene
     private dialogText!: Phaser.GameObjects.Text;
     private dialogName!: Phaser.GameObjects.Text;
     private lobbyUI!: Phaser.GameObjects.Container;
-    private selection!: Phaser.GameObjects.Rectangle;
+    private lucas!: Phaser.Physics.Arcade.Image;
+    private gabriella!: Phaser.GameObjects.Image;
+    private movement!: Record<'up' | 'down' | 'left' | 'right', Phaser.Input.Keyboard.Key>;
+    private entrance!: Phaser.GameObjects.Zone;
+    private entranceLabel!: Phaser.GameObjects.Text;
+    private pauseEvent?: Phaser.Time.TimerEvent;
+    private textPages: string[] = [];
+    private pageIndex = 0;
+    private currentFullText = '';
     private promptText!: Phaser.GameObjects.Text;
     private labels: Phaser.GameObjects.Text[] = [];
     private objects: Phaser.GameObjects.Image[] = [];
     private advanceKey!: Phaser.Input.Keyboard.Key;
-    private leftKeys!: Phaser.Input.Keyboard.Key[];
-    private rightKeys!: Phaser.Input.Keyboard.Key[];
-    private selected = 0;
     private visited = [false, false];
     private lines: Line[] = [];
     private lineIndex = 0;
@@ -61,44 +104,51 @@ export class Cinema extends Phaser.Scene
     {
         const { width, height } = this.scale;
         this.state = 'transition';
-        this.selected = 0;
         this.visited = [false, false];
         this.labels = [];
         this.objects = [];
         this.isTyping = false;
         this.typingEvent = undefined;
+        this.pauseEvent = undefined;
+        this.textPages = [];
+        this.pageIndex = 0;
 
         this.background = this.add.image(width / 2, height / 2, 'cinema-lobby')
             .setDisplaySize(width, height);
         this.portrait = this.add.image(145, height - 240, 'gabriella-portrait')
             .setScale(0.22).setDepth(150).setVisible(false);
 
-        this.lobbyUI = this.add.container(0, 0).setDepth(100).setVisible(false);
-        this.selection = this.add.rectangle(350, 465, 230, 190, 0x1E2438, 0.85)
-            .setStrokeStyle(2, 0xD8B36A);
-        this.lobbyUI.add(this.selection);
-        ['cinema-ticket', 'popcorn'].forEach((key, index) => {
-            const x = index === 0 ? 350 : 674;
-            const object = this.add.image(x, 445, key);
-            object.setScale(290 / object.width);
-            this.objects.push(object);
-            const label = this.add.text(x, 530, index === 0 ? 'Ingressos' : 'Pipoca', {
-                fontFamily: 'Arial', fontSize: '22px', color: '#F4EBDD',
-                backgroundColor: '#1E2438', padding: { x: 10, y: 5 }
-            }).setOrigin(0.5);
-            this.labels.push(label);
-            this.lobbyUI.add([object, label]);
-        });
-        const instructions = this.add.text(width / 2, 600, 'A / D ou ← / → para escolher', {
+        this.physics.world.setBounds(60, height * 0.70, width - 120, height * 0.27);
+        this.lucas = this.physics.add.image(width * 0.48, height * 0.86, 'lucas-front')
+            .setOrigin(0.5, 1).setScale(0.16).setDepth(20);
+        this.lucas.body!.setSize(180, 80);
+        this.lucas.body!.setOffset((this.lucas.width - 180) / 2, this.lucas.height - 80);
+        this.lucas.setCollideWorldBounds(true);
+        this.gabriella = this.add.image(width * 0.65, height * 0.86, 'gabriella-front')
+            .setOrigin(0.5, 1).setScale(0.16).setDepth(20);
+        this.entrance = this.add.zone(width * 0.50, height * 0.70, 100, 80);
+        this.entranceLabel = this.add.text(this.entrance.x, height * 0.62, 'Sala de cinema', {
             fontFamily: 'Arial', fontSize: '20px', color: '#F4EBDD',
-            backgroundColor: '#1E2438', padding: { x: 12, y: 6 }
-        }).setOrigin(0.5);
+            backgroundColor: '#1E2438', padding: { x: 10, y: 5 }
+        }).setOrigin(0.5).setVisible(false);
+        ['cinema-ticket', 'popcorn'].forEach((key, index) => {
+            const x = width * (index === 0 ? 0.25 : 0.83);
+            const object = this.add.image(x, height * 0.65, key);
+            object.setScale(220 / object.width);
+            this.objects.push(object);
+            const label = this.add.text(x, height * 0.73, index === 0 ? 'Ingressos' : 'Pipoca', {
+                fontFamily: 'Arial', fontSize: '20px', color: '#F4EBDD',
+                backgroundColor: '#1E2438', padding: { x: 10, y: 5 }
+            }).setOrigin(0.5).setDepth(25);
+            this.labels.push(label);
+        });
+        this.lobbyUI = this.add.container(0, 0).setDepth(100).setVisible(false);
         const promptBackground = this.add.image(width / 2, height - 75, 'interaction-prompt')
             .setDisplaySize(390, 105);
         this.promptText = this.add.text(width / 2, height - 75, '', {
             fontFamily: 'Arial', fontSize: '22px', color: '#1E2438', fontStyle: 'bold'
         }).setOrigin(0.5);
-        this.lobbyUI.add([instructions, promptBackground, this.promptText]);
+        this.lobbyUI.add([promptBackground, this.promptText]);
 
         const box = this.add.image(width / 2, height - 115, 'dialog-box').setDisplaySize(780, 180);
         this.dialogText = this.add.text(width / 2 - 180, height - 140, '', {
@@ -114,76 +164,107 @@ export class Cinema extends Phaser.Scene
 
         const keyboard = this.input.keyboard!;
         this.advanceKey = keyboard.addKey('E');
-        this.leftKeys = [keyboard.addKey('A'), keyboard.addKey('LEFT')];
-        this.rightKeys = [keyboard.addKey('D'), keyboard.addKey('RIGHT')];
+        this.movement = { up: keyboard.addKey('W'), down: keyboard.addKey('S'),
+            left: keyboard.addKey('A'), right: keyboard.addKey('D') };
         this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_IN_COMPLETE,
             () => this.startDialog(conversations.intro, () => this.showLobby()));
         this.cameras.main.fadeIn(1200, 30, 36, 56);
-        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.typingEvent?.remove(false));
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+            this.typingEvent?.remove(false);
+            this.pauseEvent?.remove(false);
+        });
     }
 
     update ()
     {
-        // Consome os eventos mesmo durante transições, evitando ações atrasadas.
-        const left = this.leftKeys.map(key => Phaser.Input.Keyboard.JustDown(key)).some(Boolean);
-        const right = this.rightKeys.map(key => Phaser.Input.Keyboard.JustDown(key)).some(Boolean);
         const advance = Phaser.Input.Keyboard.JustDown(this.advanceKey);
+        this.lucas.setVelocity(0);
         if (this.state === 'lobby')
         {
-            if (left || right)
+            const x = Number(this.movement.right.isDown) - Number(this.movement.left.isDown);
+            const y = Number(this.movement.down.isDown) - Number(this.movement.up.isDown);
+            if (x || y)
             {
-                this.selected = left ? 0 : 1;
-                this.updateSelection();
+                this.lucas.setVelocity(x, y);
+                this.lucas.body!.velocity.normalize().scale(180);
+                if (y) this.lucas.setTexture(y < 0 ? 'lucas-back' : 'lucas-front').setFlipX(false);
+                else this.lucas.setTexture('lucas-left').setFlipX(x > 0);
             }
+            // Aproximação pelo chão abaixo dos objetos, sem atravessar a parede do lobby.
+            const nearbyObject = this.objects.findIndex(object =>
+                Phaser.Math.Distance.Between(this.lucas.x, this.lucas.y,
+                    object.x, this.scale.height * 0.76) < 110);
+            const nearEntrance = this.visited[0] && Phaser.Math.Distance.Between(
+                this.lucas.x, this.lucas.y, this.entrance.x, this.entrance.y) < 110;
+            this.lobbyUI.setVisible(nearbyObject !== -1 || nearEntrance);
+            this.promptText.setText(nearbyObject === 0 ? 'E — Ver os ingressos' :
+                nearbyObject === 1 ? 'E — Dividir a pipoca' : 'E — Entrar na sala');
             if (!advance) return;
-            if (this.visited.every(Boolean)) { this.enterRoom(); return; }
-            const selected = this.selected;
-            this.startDialog(selected === 0 ? conversations.ticket : conversations.popcorn, () => {
-                this.visited[selected] = true;
-                if (!this.visited[1 - selected]) this.selected = 1 - selected;
-                this.showLobby();
-            });
+            if (nearbyObject !== -1)
+            {
+                this.startDialog(nearbyObject === 0 ? conversations.ticket : conversations.popcorn, () => {
+                    this.visited[nearbyObject] = true;
+                    this.labels[nearbyObject].setText(nearbyObject === 0 ? 'Ingressos ✓' : 'Pipoca ✓');
+                    this.showLobby();
+                });
+            }
+            else if (nearEntrance)
+                this.startDialog(conversations.beforeRoom, () => this.enterRoom());
         }
         else if (this.state === 'dialog' && advance)
         {
             if (this.isTyping)
             {
                 this.typingEvent?.remove(false);
-                this.dialogText.setText(this.lines[this.lineIndex].text);
+                this.dialogText.setText(this.currentFullText);
                 this.isTyping = false;
             }
-            else if (++this.lineIndex < this.lines.length) this.showLine();
+            else if (this.pageIndex + 1 < this.textPages.length)
+                this.startTyping(this.textPages[++this.pageIndex]);
             else
             {
-                this.dialog.setVisible(false);
-                this.portrait.setVisible(false);
-                this.afterDialog();
+                const pause = this.lines[this.lineIndex].pauseAfter;
+                if (pause)
+                {
+                    this.state = 'pause';
+                    this.pauseEvent = this.time.delayedCall(pause, () => {
+                        this.state = 'dialog';
+                        this.nextLine();
+                    });
+                }
+                else this.nextLine();
             }
         }
-        else if (this.state === 'memory' && advance) this.scene.restart();
+        else if (this.state === 'memory' && advance)
+        {
+            this.state = 'transition';
+            this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+                () => this.scene.start('Parents'));
+            this.cameras.main.fadeOut(1200, 30, 36, 56);
+        }
     }
 
     private showLobby ()
     {
         this.state = 'lobby';
-        this.lobbyUI.setVisible(true);
-        this.updateSelection();
+        this.entranceLabel.setVisible(this.visited[0]);
     }
 
-    private updateSelection ()
+    private nextLine ()
     {
-        this.selection.setX(this.selected === 0 ? 350 : 674);
-        this.labels.forEach((label, index) => {
-            label.setText(`${index === 0 ? 'Ingressos' : 'Pipoca'}${this.visited[index] ? ' ✓' : ''}`);
-            this.objects[index].setAlpha(index === this.selected ? 1 : 0.7);
-        });
-        this.promptText.setText(this.visited.every(Boolean) ? 'E — Entrar na sala' :
-            this.selected === 0 ? 'E — Ver os ingressos' : 'E — Dividir a pipoca');
+        if (++this.lineIndex < this.lines.length) this.showLine();
+        else
+        {
+            this.dialog.setVisible(false);
+            this.portrait.setVisible(false);
+            this.afterDialog();
+        }
     }
 
     private startDialog (lines: Line[], onComplete: () => void)
     {
         this.state = 'dialog';
+        this.lucas.setVelocity(0);
         this.lobbyUI.setVisible(false);
         this.dialog.setVisible(true);
         this.lines = lines;
@@ -204,12 +285,25 @@ export class Cinema extends Phaser.Scene
             this.portrait.setTexture(line.portrait);
             this.portrait.setX(line.speaker === 'Lucas' ? this.scale.width - 145 : 145);
         }
+        const wrapped = this.dialogText.getWrappedText(line.text);
+        this.textPages = [];
+        for (let i = 0; i < wrapped.length; i += 2)
+            this.textPages.push(wrapped.slice(i, i + 2).join(' '));
+        this.pageIndex = 0;
+        this.startTyping(this.textPages[0]);
+    }
+
+    private startTyping (text: string)
+    {
+        this.typingEvent?.remove(false);
+        this.currentFullText = text;
+        this.dialogText.setText('');
         this.isTyping = true;
         let character = 0;
-        this.typingEvent = this.time.addEvent({ delay: 35, repeat: line.text.length - 1,
+        this.typingEvent = this.time.addEvent({ delay: 35, repeat: text.length - 1,
             callback: () => {
-                this.dialogText.setText(line.text.substring(0, ++character));
-                if (character === line.text.length) this.isTyping = false;
+                this.dialogText.setText(text.substring(0, ++character));
+                if (character === text.length) this.isTyping = false;
             }
         });
     }
@@ -217,14 +311,28 @@ export class Cinema extends Phaser.Scene
     private enterRoom ()
     {
         this.state = 'transition';
+        this.lucas.setVelocity(0);
         this.lobbyUI.setVisible(false);
-        this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-            this.background.setTexture('cinema-room').setDisplaySize(this.scale.width, this.scale.height);
-            this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_IN_COMPLETE,
-                () => this.startDialog(conversations.room, () => this.showMemory()));
-            this.cameras.main.fadeIn(1000, 30, 36, 56);
+        const ticket = this.add.image(this.objects[0].x, this.objects[0].y, 'cinema-ticket')
+            .setScale(this.objects[0].scaleX).setDepth(280);
+        this.tweens.add({ targets: ticket, x: this.scale.width / 2, y: this.scale.height / 2,
+            scaleX: 1800 / ticket.width, scaleY: 1800 / ticket.width,
+            duration: 650, ease: 'Cubic.In', onComplete: () => {
+                this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+                    ticket.destroy();
+                    this.lucas.setVisible(false);
+                    this.gabriella.setVisible(false);
+                    this.objects.forEach(object => object.setVisible(false));
+                    this.labels.forEach(label => label.setVisible(false));
+                    this.entranceLabel.setVisible(false);
+                    this.background.setTexture('cinema-room').setDisplaySize(this.scale.width, this.scale.height);
+                    this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_IN_COMPLETE,
+                        () => this.startDialog(conversations.room, () => this.showMemory()));
+                    this.cameras.main.fadeIn(1200, 30, 36, 56);
+                });
+                this.cameras.main.fadeOut(650, 30, 36, 56);
+            }
         });
-        this.cameras.main.fadeOut(1000, 30, 36, 56);
     }
 
     private showMemory ()
@@ -237,14 +345,14 @@ export class Cinema extends Phaser.Scene
             frame.destroy();
             this.add.rectangle(width / 2, height / 2, width, height, 0x1E2438, 0.55).setDepth(299);
             this.add.image(width / 2, height / 2, 'memory-card').setDisplaySize(600, 850).setDepth(300);
-            this.add.text(width / 2, height / 2 - 20, 'Nosso primeiro cinema', {
+            this.add.text(width / 2, height / 2 - 20, 'Só um cinema', {
                 fontFamily: 'Arial', fontSize: '26px', color: '#1E2438', fontStyle: 'bold'
             }).setOrigin(0.5).setDepth(301);
-            this.add.text(width / 2, height / 2 + 30, 'O primeiro passeio juntos.', {
+            this.add.text(width / 2, height / 2 + 30, 'Pelo menos era isso que vocês diziam.', {
                 fontFamily: 'Arial', fontSize: '20px', color: '#39435F',
                 align: 'center', wordWrap: { width: 420 }
             }).setOrigin(0.5).setDepth(301);
-            this.add.text(width / 2, height - 65, 'E — Rever memória', {
+            this.add.text(width / 2, height - 65, 'E — Conhecer os pais', {
                 fontFamily: 'Arial', fontSize: '22px', color: '#F4EBDD',
                 backgroundColor: '#1E2438', padding: { x: 12, y: 8 }
             }).setOrigin(0.5).setDepth(302);

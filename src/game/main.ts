@@ -7,6 +7,7 @@ import { Preloader } from './scenes/Preloader';
 import { Instagram } from './scenes/Instagram';
 import { FirstMeeting } from './scenes/FirstMeeting';
 import { Cinema } from './scenes/Cinema';
+import { Parents } from './scenes/Parents';
 
 const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
@@ -39,7 +40,8 @@ const config: Phaser.Types.Core.GameConfig = {
         GameOver,
         Instagram,
         FirstMeeting,
-        Cinema
+        Cinema,
+        Parents
     ]
 };
 

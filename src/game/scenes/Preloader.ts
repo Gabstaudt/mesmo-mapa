@@ -29,6 +29,9 @@ export class Preloader extends Scene
 
     preload ()
     {
+        this.load.image('parents-house', 'assets/scenes/parents/parents-house-background.jpg');
+        this.load.image('parents-front-door', 'assets/objects/parents-front-door.png');
+        this.load.image('parents-living-room-object', 'assets/objects/parents-living-room-object.png');
         this.load.image('first-meeting-background', 'assets/scenes/first-meeting/first-meeting-background.png');
         this.load.image('first-meeting-object', 'assets/objects/first-meeting-object.png');
         this.load.image('cinema-lobby', 'assets/scenes/cinema/cinema-lobby-background.png');
