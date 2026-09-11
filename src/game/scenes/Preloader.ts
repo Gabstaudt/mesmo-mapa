@@ -58,6 +58,11 @@ export class Preloader extends Scene
     'interaction-prompt',
     'assets/ui/interaction-prompt.png'
 );
+
+this.load.image(
+    'dialog-box',
+    'assets/ui/dialog-box.png'
+);
     }
 
     create ()
