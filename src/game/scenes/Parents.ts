@@ -211,8 +211,10 @@ export class Parents extends Phaser.Scene
         }
         else if (this.state === 'memory' && advance)
         {
-            // Próximo capítulo ainda não implementado; permite rever esta memória.
-            this.scene.restart();
+            this.state = 'entering';
+            this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+                () => this.scene.start('Routine'));
+            this.cameras.main.fadeOut(1200, 30, 36, 56);
         }
     }
 
@@ -312,7 +314,7 @@ export class Parents extends Phaser.Scene
                 fontFamily: 'Arial', fontSize: '20px', color: '#39435F',
                 align: 'center', wordWrap: { width: 420 }
             }).setOrigin(0.5).setDepth(301);
-        this.add.text(width / 2, height - 65, 'E — Rever memória', {
+        this.add.text(width / 2, height - 65, 'E — Continuar', {
             fontFamily: 'Arial', fontSize: '22px', color: '#F4EBDD',
             backgroundColor: '#1E2438', padding: { x: 12, y: 8 }
         }).setOrigin(0.5).setDepth(302);

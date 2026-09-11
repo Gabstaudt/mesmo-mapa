@@ -29,6 +29,15 @@ export class Preloader extends Scene
 
     preload ()
     {
+        this.load.image('routine-ready', 'assets/scenes/routine/getting-ready-background.png');
+        this.load.image('routine-choice', 'assets/scenes/routine/food-choice-background.png');
+        // Fundo do cotidiano disponível com este nome no projeto.
+        this.load.image('routine-everyday', 'assets/scenes/routine/image.png');
+        for (const name of ['routine-clock', 'routine-mirror', 'routine-phone', 'routine-controller',
+            'routine-food', 'routine-photo', 'food-option-1', 'food-option-2', 'food-option-3'])
+        {
+            this.load.image(name, `assets/objects/${name}.png`);
+        }
         this.load.image('parents-house', 'assets/scenes/parents/parents-house-background.jpg');
         this.load.image('parents-front-door', 'assets/objects/parents-front-door.png');
         this.load.image('parents-living-room-object', 'assets/objects/parents-living-room-object.png');

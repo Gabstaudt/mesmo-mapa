@@ -8,6 +8,7 @@ import { Instagram } from './scenes/Instagram';
 import { FirstMeeting } from './scenes/FirstMeeting';
 import { Cinema } from './scenes/Cinema';
 import { Parents } from './scenes/Parents';
+import { Routine } from './scenes/Routine';
 
 const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
@@ -41,7 +42,8 @@ const config: Phaser.Types.Core.GameConfig = {
         Instagram,
         FirstMeeting,
         Cinema,
-        Parents
+        Parents,
+        Routine
     ]
 };
 
