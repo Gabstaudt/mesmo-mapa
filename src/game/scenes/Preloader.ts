@@ -40,6 +40,16 @@ export class Preloader extends Scene
             );
 
             this.load.image(
+            'lucas-left',
+            'assets/characters/lucas-left.png'
+        );
+
+        this.load.image(
+            'lucas-back',
+            'assets/characters/lucas-back.png'
+        );
+
+            this.load.image(
             'gabriella-front',
             'assets/characters/gabriella-front.png'
             );
