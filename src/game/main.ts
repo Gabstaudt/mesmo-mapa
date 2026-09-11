@@ -5,6 +5,8 @@ import { MainMenu } from './scenes/MainMenu';
 import { AUTO, Game } from 'phaser';
 import { Preloader } from './scenes/Preloader';
 import { Instagram } from './scenes/Instagram';
+import { FirstMeeting } from './scenes/FirstMeeting';
+import { Cinema } from './scenes/Cinema';
 
 const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
@@ -35,7 +37,9 @@ const config: Phaser.Types.Core.GameConfig = {
         MainMenu,
         MainGame,
         GameOver,
-        Instagram
+        Instagram,
+        FirstMeeting,
+        Cinema
     ]
 };
 

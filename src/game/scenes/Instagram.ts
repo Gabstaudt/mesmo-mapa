@@ -29,6 +29,7 @@ export class Instagram extends Phaser.Scene
     private currentFullText = '';
 
     private memoryVisible = false;
+    private isTransitioning = false;
 
     private storySteps: StoryStep[] = [
         {
@@ -67,6 +68,9 @@ export class Instagram extends Phaser.Scene
 
     create ()
     {
+        this.stepIndex = 0;
+        this.memoryVisible = false;
+        this.isTransitioning = false;
         const { width, height } = this.scale;
 
         // -------------------------
@@ -221,7 +225,7 @@ export class Instagram extends Phaser.Scene
 
     update ()
     {
-        if (!Phaser.Input.Keyboard.JustDown(this.advanceKey))
+        if (this.isTransitioning || !Phaser.Input.Keyboard.JustDown(this.advanceKey))
         {
             return;
         }
@@ -348,6 +352,7 @@ export class Instagram extends Phaser.Scene
 
     private finishMemory ()
     {
+        this.isTransitioning = true;
         this.memoryVisible = false;
 
         this.memoryCard.setVisible(false);
@@ -362,7 +367,9 @@ export class Instagram extends Phaser.Scene
             56
         );
 
-        // Depois vamos colocar:
-        // this.scene.start('FirstMeeting');
+        this.cameras.main.once(
+            Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+            () => this.scene.start('FirstMeeting')
+        );
     }
 }
