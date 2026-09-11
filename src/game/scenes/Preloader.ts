@@ -63,6 +63,11 @@ this.load.image(
     'dialog-box',
     'assets/ui/dialog-box.png'
 );
+
+this.load.image(
+    'instagram-background',
+    'assets/scenes/instagram/instagram-background.png'
+);
     }
 
     create ()

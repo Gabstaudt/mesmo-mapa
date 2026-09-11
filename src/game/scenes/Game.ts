@@ -23,8 +23,9 @@ export class Game extends Phaser.Scene
 
     private isDialogOpen = false;
     private dialogIndex = 0;
+    private isTransitioning = false;
 
-    // Controle da digitação
+    // Controle do efeito de digitação
     private isTyping = false;
     private typingEvent?: Phaser.Time.TimerEvent;
     private currentFullText = '';
@@ -143,7 +144,7 @@ export class Game extends Phaser.Scene
         this.dialogBackground.setDisplaySize(780, 180);
         this.dialogBackground.setDepth(200);
 
-        // Texto principal
+        // Texto principal da fala
         this.dialogText = this.add.text(
             width / 2 - 180,
             height - 140,
@@ -180,7 +181,7 @@ export class Game extends Phaser.Scene
         this.dialogName.setOrigin(0.5);
         this.dialogName.setDepth(202);
 
-        // Esconde diálogo inicialmente
+        // Tudo começa escondido
         this.dialogBackground.setVisible(false);
         this.dialogText.setVisible(false);
         this.dialogName.setVisible(false);
@@ -189,6 +190,16 @@ export class Game extends Phaser.Scene
     update ()
     {
         const speed = 220;
+
+        // -------------------------
+        // DURANTE A TRANSIÇÃO
+        // -------------------------
+
+        if (this.isTransitioning)
+        {
+            this.lucas.setVelocity(0);
+            return;
+        }
 
         // -------------------------
         // DIÁLOGO ABERTO
@@ -200,14 +211,16 @@ export class Game extends Phaser.Scene
 
             if (Phaser.Input.Keyboard.JustDown(this.interactKey))
             {
-                // Se ainda está digitando, completa a frase
+                // Se ainda está escrevendo:
+                // E mostra toda a frase imediatamente
                 if (this.isTyping)
                 {
                     this.finishTyping();
                 }
                 else
                 {
-                    // Se terminou, avança
+                    // Se terminou de escrever:
+                    // E passa para a próxima fala
                     this.advanceDialog();
                 }
             }
@@ -221,32 +234,43 @@ export class Game extends Phaser.Scene
 
         this.lucas.setVelocity(0);
 
+        // Esquerda
         if (this.cursors.left.isDown)
         {
             this.lucas.setVelocityX(-speed);
+
             this.lucas.setTexture('lucas-left');
             this.lucas.setFlipX(false);
         }
+
+        // Direita
         else if (this.cursors.right.isDown)
         {
             this.lucas.setVelocityX(speed);
+
             this.lucas.setTexture('lucas-left');
             this.lucas.setFlipX(true);
         }
 
+        // Cima
         if (this.cursors.up.isDown)
         {
             this.lucas.setVelocityY(-speed);
+
             this.lucas.setTexture('lucas-back');
             this.lucas.setFlipX(false);
         }
+
+        // Baixo
         else if (this.cursors.down.isDown)
         {
             this.lucas.setVelocityY(speed);
+
             this.lucas.setTexture('lucas-front');
             this.lucas.setFlipX(false);
         }
 
+        // Mantém a mesma velocidade andando na diagonal
         if (
             this.lucas.body &&
             this.lucas.body.velocity.length() > 0
@@ -292,6 +316,10 @@ export class Game extends Phaser.Scene
         }
     }
 
+    // -------------------------
+    // ABRIR DIÁLOGO
+    // -------------------------
+
     private openDialog ()
     {
         this.isDialogOpen = true;
@@ -307,6 +335,10 @@ export class Game extends Phaser.Scene
         this.showCurrentLine();
     }
 
+    // -------------------------
+    // MOSTRAR FALA ATUAL
+    // -------------------------
+
     private showCurrentLine ()
     {
         const currentLine = this.dialogLines[this.dialogIndex];
@@ -316,9 +348,12 @@ export class Game extends Phaser.Scene
         this.startTyping(currentLine.text);
     }
 
+    // -------------------------
+    // EFEITO DE DIGITAÇÃO
+    // -------------------------
+
     private startTyping (text: string)
     {
-        // Cancela uma digitação anterior, se houver
         if (this.typingEvent)
         {
             this.typingEvent.remove(false);
@@ -335,7 +370,8 @@ export class Game extends Phaser.Scene
             delay: 35,
             repeat: text.length - 1,
 
-            callback: () => {
+            callback: () =>
+            {
                 currentCharacter++;
 
                 this.dialogText.setText(
@@ -350,6 +386,10 @@ export class Game extends Phaser.Scene
         });
     }
 
+    // -------------------------
+    // COMPLETA A FRASE
+    // -------------------------
+
     private finishTyping ()
     {
         if (this.typingEvent)
@@ -361,6 +401,10 @@ export class Game extends Phaser.Scene
 
         this.isTyping = false;
     }
+
+    // -------------------------
+    // PRÓXIMA FALA
+    // -------------------------
 
     private advanceDialog ()
     {
@@ -375,6 +419,10 @@ export class Game extends Phaser.Scene
         this.showCurrentLine();
     }
 
+    // -------------------------
+    // FINAL DO DIÁLOGO
+    // -------------------------
+
     private closeDialog ()
     {
         if (this.typingEvent)
@@ -388,5 +436,40 @@ export class Game extends Phaser.Scene
         this.dialogBackground.setVisible(false);
         this.dialogText.setVisible(false);
         this.dialogName.setVisible(false);
+
+        // A escola terminou.
+        // Começa a passagem para a próxima memória.
+        this.startTransition();
+    }
+
+    // -------------------------
+    // TRANSIÇÃO
+    // -------------------------
+
+    private startTransition ()
+    {
+        this.isTransitioning = true;
+
+        this.lucas.setVelocity(0);
+
+        // Garante que nenhum HUD apareça
+        this.promptBackground.setVisible(false);
+        this.promptText.setVisible(false);
+
+        // Fade para o Azul Noite oficial
+        this.cameras.main.fadeOut(
+            1200,
+            30,
+            36,
+            56
+        );
+
+        this.cameras.main.once(
+            Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE,
+            () =>
+            {
+                this.scene.start('Instagram');
+            }
+        );
     }
 }
