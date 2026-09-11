@@ -10,6 +10,7 @@ export class Game extends Phaser.Scene
 
     private dialogBackground!: Phaser.GameObjects.Image;
     private dialogText!: Phaser.GameObjects.Text;
+    private dialogName!: Phaser.GameObjects.Text;
 
     private cursors!: {
         up: Phaser.Input.Keyboard.Key;
@@ -23,9 +24,24 @@ export class Game extends Phaser.Scene
     private isDialogOpen = false;
     private dialogIndex = 0;
 
-    private dialogLines: string[] = [
-        'Vocês já se conheciam de vista.',
-        'Mas ainda não sabiam o que esse caminho ia virar.'
+    // Controle da digitação
+    private isTyping = false;
+    private typingEvent?: Phaser.Time.TimerEvent;
+    private currentFullText = '';
+
+    private dialogLines = [
+        {
+            speaker: 'Narrador',
+            text: 'Vocês já se conheciam de vista.'
+        },
+        {
+            speaker: 'Narrador',
+            text: 'Mas ainda não sabiam o que esse caminho ia virar.'
+        },
+        {
+            speaker: 'Lucas',
+            text: 'Talvez eu já tivesse reparado em você antes do que admitiria.'
+        }
     ];
 
     constructor ()
@@ -37,7 +53,10 @@ export class Game extends Phaser.Scene
     {
         const { width, height } = this.scale;
 
-        // Fundo da escola
+        // -------------------------
+        // CENÁRIO
+        // -------------------------
+
         const background = this.add.image(
             width / 2,
             height / 2,
@@ -46,14 +65,16 @@ export class Game extends Phaser.Scene
 
         background.setDisplaySize(width, height);
 
-        // Lucas
+        // -------------------------
+        // PERSONAGENS
+        // -------------------------
+
         this.lucas = this.physics.add.image(
             width * 0.72,
             height * 0.72,
             'lucas-front'
         );
 
-        // Gabriella
         this.gabriella = this.add.image(
             width * 0.28,
             height * 0.68,
@@ -65,7 +86,10 @@ export class Game extends Phaser.Scene
 
         this.lucas.setCollideWorldBounds(true);
 
-        // Movimento
+        // -------------------------
+        // CONTROLES
+        // -------------------------
+
         this.cursors = {
             up: this.input.keyboard!.addKey('W'),
             down: this.input.keyboard!.addKey('S'),
@@ -73,10 +97,12 @@ export class Game extends Phaser.Scene
             right: this.input.keyboard!.addKey('D')
         };
 
-        // Interação
         this.interactKey = this.input.keyboard!.addKey('E');
 
-        // HUD "Pressione E"
+        // -------------------------
+        // HUD "PRESSIONE E"
+        // -------------------------
+
         this.promptBackground = this.add.image(
             width / 2,
             height - 75,
@@ -104,7 +130,10 @@ export class Game extends Phaser.Scene
         this.promptBackground.setVisible(false);
         this.promptText.setVisible(false);
 
-        // Caixa de diálogo
+        // -------------------------
+        // CAIXA DE DIÁLOGO
+        // -------------------------
+
         this.dialogBackground = this.add.image(
             width / 2,
             height - 115,
@@ -114,55 +143,90 @@ export class Game extends Phaser.Scene
         this.dialogBackground.setDisplaySize(780, 180);
         this.dialogBackground.setDepth(200);
 
+        // Texto principal
         this.dialogText = this.add.text(
-    width / 2 - 180,
-    height - 140,
-    '',
-    {
-        fontFamily: 'Arial',
-        fontSize: '24px',
-        color: '#1E2438',
-        wordWrap: {
-            width: 480
-        },
-        lineSpacing: 8
-    }
-);
+            width / 2 - 180,
+            height - 140,
+            '',
+            {
+                fontFamily: 'Arial',
+                fontSize: '24px',
+                color: '#1E2438',
+
+                wordWrap: {
+                    width: 480
+                },
+
+                lineSpacing: 8
+            }
+        );
 
         this.dialogText.setDepth(201);
 
+        // Nome de quem está falando
+        this.dialogName = this.add.text(
+            width / 2 - 115,
+            height - 164,
+            '',
+            {
+                fontFamily: 'Arial',
+                fontSize: '18px',
+                color: '#F4EBDD',
+                fontStyle: 'bold',
+                align: 'center'
+            }
+        );
+
+        this.dialogName.setOrigin(0.5);
+        this.dialogName.setDepth(202);
+
+        // Esconde diálogo inicialmente
         this.dialogBackground.setVisible(false);
         this.dialogText.setVisible(false);
+        this.dialogName.setVisible(false);
     }
 
     update ()
     {
         const speed = 220;
 
-        // Se diálogo estiver aberto, bloqueia movimento
+        // -------------------------
+        // DIÁLOGO ABERTO
+        // -------------------------
+
         if (this.isDialogOpen)
         {
             this.lucas.setVelocity(0);
 
             if (Phaser.Input.Keyboard.JustDown(this.interactKey))
             {
-                this.advanceDialog();
+                // Se ainda está digitando, completa a frase
+                if (this.isTyping)
+                {
+                    this.finishTyping();
+                }
+                else
+                {
+                    // Se terminou, avança
+                    this.advanceDialog();
+                }
             }
 
             return;
         }
 
+        // -------------------------
+        // MOVIMENTO DO LUCAS
+        // -------------------------
+
         this.lucas.setVelocity(0);
 
-        // Esquerda
         if (this.cursors.left.isDown)
         {
             this.lucas.setVelocityX(-speed);
             this.lucas.setTexture('lucas-left');
             this.lucas.setFlipX(false);
         }
-
-        // Direita
         else if (this.cursors.right.isDown)
         {
             this.lucas.setVelocityX(speed);
@@ -170,15 +234,12 @@ export class Game extends Phaser.Scene
             this.lucas.setFlipX(true);
         }
 
-        // Cima
         if (this.cursors.up.isDown)
         {
             this.lucas.setVelocityY(-speed);
             this.lucas.setTexture('lucas-back');
             this.lucas.setFlipX(false);
         }
-
-        // Baixo
         else if (this.cursors.down.isDown)
         {
             this.lucas.setVelocityY(speed);
@@ -186,7 +247,6 @@ export class Game extends Phaser.Scene
             this.lucas.setFlipX(false);
         }
 
-        // Corrige diagonal
         if (
             this.lucas.body &&
             this.lucas.body.velocity.length() > 0
@@ -197,7 +257,10 @@ export class Game extends Phaser.Scene
                 .scale(speed);
         }
 
-        // Distância Lucas ↔ Gabriella
+        // -------------------------
+        // PROXIMIDADE DA GABRIELLA
+        // -------------------------
+
         const distance = Phaser.Math.Distance.Between(
             this.lucas.x,
             this.lucas.y,
@@ -205,7 +268,6 @@ export class Game extends Phaser.Scene
             this.gabriella.y
         );
 
-        // Mostra HUD
         if (distance < 140)
         {
             this.promptBackground.setVisible(true);
@@ -217,7 +279,10 @@ export class Game extends Phaser.Scene
             this.promptText.setVisible(false);
         }
 
-        // Abre diálogo
+        // -------------------------
+        // INICIA O DIÁLOGO
+        // -------------------------
+
         if (
             distance < 120 &&
             Phaser.Input.Keyboard.JustDown(this.interactKey)
@@ -237,10 +302,64 @@ export class Game extends Phaser.Scene
 
         this.dialogBackground.setVisible(true);
         this.dialogText.setVisible(true);
+        this.dialogName.setVisible(true);
 
-        this.dialogText.setText(
-            this.dialogLines[this.dialogIndex]
-        );
+        this.showCurrentLine();
+    }
+
+    private showCurrentLine ()
+    {
+        const currentLine = this.dialogLines[this.dialogIndex];
+
+        this.dialogName.setText(currentLine.speaker);
+
+        this.startTyping(currentLine.text);
+    }
+
+    private startTyping (text: string)
+    {
+        // Cancela uma digitação anterior, se houver
+        if (this.typingEvent)
+        {
+            this.typingEvent.remove(false);
+        }
+
+        this.dialogText.setText('');
+
+        this.currentFullText = text;
+        this.isTyping = true;
+
+        let currentCharacter = 0;
+
+        this.typingEvent = this.time.addEvent({
+            delay: 35,
+            repeat: text.length - 1,
+
+            callback: () => {
+                currentCharacter++;
+
+                this.dialogText.setText(
+                    text.substring(0, currentCharacter)
+                );
+
+                if (currentCharacter >= text.length)
+                {
+                    this.isTyping = false;
+                }
+            }
+        });
+    }
+
+    private finishTyping ()
+    {
+        if (this.typingEvent)
+        {
+            this.typingEvent.remove(false);
+        }
+
+        this.dialogText.setText(this.currentFullText);
+
+        this.isTyping = false;
     }
 
     private advanceDialog ()
@@ -253,16 +372,21 @@ export class Game extends Phaser.Scene
             return;
         }
 
-        this.dialogText.setText(
-            this.dialogLines[this.dialogIndex]
-        );
+        this.showCurrentLine();
     }
 
     private closeDialog ()
     {
+        if (this.typingEvent)
+        {
+            this.typingEvent.remove(false);
+        }
+
+        this.isTyping = false;
         this.isDialogOpen = false;
 
         this.dialogBackground.setVisible(false);
         this.dialogText.setVisible(false);
+        this.dialogName.setVisible(false);
     }
 }
