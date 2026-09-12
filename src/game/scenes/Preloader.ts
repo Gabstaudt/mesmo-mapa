@@ -29,6 +29,7 @@ export class Preloader extends Scene
 
     preload ()
     {
+        this.load.image('menu-cover', 'assets/capa/capa.png');
         for (const [key, file] of Object.entries({
             airport: 'airport', family: 'family-house', baptism: 'baptism', sleep: 'sleep-together', falls: 'iguacu'
         })) this.load.image(`travel-${key}`, `assets/scenes/travel/${file}-background.png`);
