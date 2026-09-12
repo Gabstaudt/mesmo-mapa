@@ -77,6 +77,9 @@ export class Preloader extends Scene
         this.load.image('maturity-switch', 'assets/objects/maturity-switch.png');
         this.load.image('gabriella-left', 'assets/characters/gabriella-left.png');
         this.load.image('gabriella-back', 'assets/characters/gabriella-back.png');
+        this.load.image('routine-series', 'assets/scenes/routine/sofa-series-background.png');
+        this.load.image('couple-sofa-series', 'assets/couple/couple-sofa-series.png');
+        this.load.image('series-selection-panel', 'assets/ui/series-selection-panel.png');
         this.load.image('routine-ready', 'assets/scenes/routine/getting-ready-background.png');
         this.load.image('routine-choice', 'assets/scenes/routine/food-choice-background.png');
         // Fundo do cotidiano disponível com este nome no projeto.

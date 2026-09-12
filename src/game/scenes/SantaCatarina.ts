@@ -232,7 +232,8 @@ export class SantaCatarina extends Phaser.Scene
         {
             this.shops.add(point.id); point.marker.setText('✓'); this.updateHud();
             this.startDialog(point.lines, () => {
-                if (this.shops.size < 3) this.state = 'explore';
+                if (this.shops.size === 2) this.startDialog(script.paraguayJoke, () => { this.state = 'explore'; });
+                else if (this.shops.size < 3) this.state = 'explore';
                 else this.startDialog(script.paraguayEnd, () => {
                     this.remember('paraguay'); this.state = 'pause';
                     this.time.delayedCall(1500, () => this.routeTransition(['SANTA CATARINA', 'PARAGUAI', 'FOZ DO IGUAÇU'], 'falls'));
@@ -356,7 +357,15 @@ export class SantaCatarina extends Phaser.Scene
         else if (this.pageIndex + 1 < this.textPages.length) this.startTyping(this.textPages[++this.pageIndex]);
         else
         {
-            const pause = this.activeLines[this.lineIndex].pauseAfter;
+            const line = this.activeLines[this.lineIndex];
+            const pause = line.pauseAfter;
+            if (line.laughAfter) {
+                this.dialog.setVisible(false); this.portrait.setVisible(false);
+                this.tweens.add({
+                    targets: line.laughAfter === 'both' ? [this.lucas, this.gabriella] : [this.lucas],
+                    y: '-=3', duration: 120, yoyo: true, repeat: 2, ease: 'Sine.InOut'
+                });
+            }
             if (pause) { this.state = 'pause'; this.time.delayedCall(pause, () => { this.state = 'dialog'; this.nextLine(); }); }
             else this.nextLine();
         }
@@ -370,6 +379,7 @@ export class SantaCatarina extends Phaser.Scene
 
     private showLine ()
     {
+        this.dialog.setVisible(true);
         const line = this.activeLines[this.lineIndex]; this.dialogName.setText(line.speaker);
         this.portrait.setVisible(!!line.portrait);
         if (line.portrait) this.portrait.setTexture(line.portrait).setX(line.speaker === 'Lucas' ? 879 : 145);

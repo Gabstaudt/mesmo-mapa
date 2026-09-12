@@ -1,7 +1,37 @@
-export type RoutineLine = { speaker: 'Narrador' | 'Lucas' | 'Gabriella'; text: string; portrait?: string; pauseAfter?: number };
+export type RoutineLine = { speaker: 'Narrador' | 'Lucas' | 'Gabriella'; text: string; portrait?: string; pauseAfter?: number; laughAfter?: boolean };
 
 // Roteiro fornecido por Gabriella; falas do jogo, não transcrições de um chat específico.
 export const routineDialogues = {
+    seriesIntro: [
+        { speaker: 'Gabriella', text: 'Vamos assistir alguma coisa?' },
+        { speaker: 'Lucas', text: 'Vamos.' },
+        { speaker: 'Gabriella', text: 'O quê?' },
+        { speaker: 'Lucas', text: 'Escolhe.' },
+        { speaker: 'Gabriella', text: 'Não, escolhe tu.' },
+        { speaker: 'Lucas', text: 'Tá.' },
+    ],
+    seriesWatch: [
+        { speaker: 'Gabriella', text: 'Amor.' },
+        { speaker: 'Lucas', text: 'Oi.' },
+        { speaker: 'Gabriella', text: 'Ela não gosta dele.' },
+        { speaker: 'Lucas', text: 'Já começou.' },
+        { speaker: 'Gabriella', text: 'Dá pra ver.' },
+        { speaker: 'Lucas', text: 'Tu decidiu isso em cinco minutos.' },
+        { speaker: 'Gabriella', text: 'E eu tô errada?', pauseAfter: 1000 },
+        { speaker: 'Lucas', text: 'Provavelmente não.', pauseAfter: 2500, laughAfter: true },
+        { speaker: 'Lucas', text: 'Esse casal aí não vai durar.' },
+        { speaker: 'Gabriella', text: 'EU TAVA PENSANDO A MESMA COISA.' },
+        { speaker: 'Lucas', text: 'Olha só.' },
+        { speaker: 'Gabriella', text: 'É por isso que eu gosto de assistir contigo.' },
+        { speaker: 'Lucas', text: 'Porque a gente fofoca?' },
+        { speaker: 'Gabriella', text: 'Também.', pauseAfter: 1000 },
+        { speaker: 'Gabriella', text: 'Mas eu gosto de ficar assim contigo.' },
+        { speaker: 'Lucas', text: 'Eu também.', pauseAfter: 2500 },
+        { speaker: 'Narrador', text: 'Às vezes a memória era só isso.' },
+        { speaker: 'Narrador', text: 'Um sofá.' },
+        { speaker: 'Narrador', text: 'Uma série.' },
+        { speaker: 'Narrador', text: 'E vocês comentando a vida de gente que nem conheciam.', pauseAfter: 1600, laughAfter: true },
+    ],
     clock: [
         { speaker: 'Lucas', text: 'Ela disse cinco minutos.', portrait: 'lucas-portrait', pauseAfter: 900 },
         { speaker: 'Lucas', text: 'Isso foi há…', portrait: 'lucas-portrait' },

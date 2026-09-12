@@ -1,8 +1,17 @@
 import type { RoutineLine } from './routineDialogues';
 
-export type TravelLine = Omit<RoutineLine, 'speaker'> & { speaker: RoutineLine['speaker'] | 'Familiar' };
+export type TravelLine = Omit<RoutineLine, 'speaker' | 'laughAfter'> & {
+    speaker: RoutineLine['speaker'] | 'Familiar';
+    laughAfter?: 'Lucas' | 'both';
+};
 
 export const travelDialogues: Record<string, TravelLine[]> = {
+    paraguayJoke: [
+        { speaker: 'Gabriella', text: 'Amor.', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Oi.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Você sabia que avó em espanhol é abuela?', portrait: 'gabriella-portrait', laughAfter: 'Lucas', pauseAfter: 1000 },
+        { speaker: 'Lucas', text: 'E você sabia que escola em espanhol é escuela?', portrait: 'lucas-portrait', laughAfter: 'both', pauseAfter: 1400 }
+    ],
     entry: [
         {"speaker": "Narrador", "text": "Engraçado."},
         {"speaker": "Narrador", "text": "Anos antes, Santa Catarina tinha sido o lugar para onde Gabriella estava indo quando vocês começaram a se falar.", "pauseAfter": 800},

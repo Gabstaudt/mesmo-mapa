@@ -1,8 +1,8 @@
 import * as Phaser from 'phaser';
 import { routineDialogues as script, type RoutineLine } from '../data/routineDialogues';
 
-type Stage = 'ready' | 'choice' | 'everyday';
-type State = 'transition' | 'explore' | 'select' | 'dialog' | 'pause' | 'card';
+type Stage = 'ready' | 'choice' | 'series' | 'everyday';
+type State = 'transition' | 'explore' | 'select' | 'seriesSelect' | 'dialog' | 'pause' | 'card';
 type Point = { id: string; label: string; image: Phaser.GameObjects.Image; x: number; y: number;
     lines: RoutineLine[]; marker: Phaser.GameObjects.Text };
 
@@ -34,6 +34,10 @@ export class Routine extends Phaser.Scene
     private choiceLabels: Phaser.GameObjects.Text[] = [];
     private selection!: Phaser.GameObjects.Rectangle;
     private specialChoice!: Phaser.GameObjects.Text;
+    private sofaCouple?: Phaser.GameObjects.Image;
+    private seriesPanel?: Phaser.GameObjects.Container;
+    private seriesSelection?: Phaser.GameObjects.Rectangle;
+    private seriesIndex = 0;
     private card!: Phaser.GameObjects.Container;
     private activeLines: RoutineLine[] = [];
     private lineIndex = 0;
@@ -61,6 +65,10 @@ export class Routine extends Phaser.Scene
         this.selected = 0;
         this.isTyping = false;
         this.typingEvent = undefined;
+        this.sofaCouple = undefined;
+        this.seriesPanel = undefined;
+        this.seriesSelection = undefined;
+        this.seriesIndex = 0;
         this.background = this.add.image(width / 2, height / 2, 'routine-ready').setDisplaySize(width, height);
         this.lucas = this.physics.add.image(width * 0.68, height * 0.87, 'lucas-front')
             .setOrigin(0.5, 1).setScale(0.30).setDepth(20);
@@ -176,6 +184,24 @@ export class Routine extends Phaser.Scene
             if (left || right) { this.selected = (this.selected + (left ? -1 : 1) + count) % count; this.updateChoice(); }
             if (advance) this.chooseFood();
         }
+        else if (this.state === 'seriesSelect')
+        {
+            if (left || right) {
+                this.seriesIndex = (this.seriesIndex + (left ? -1 : 1) + 3) % 3;
+                this.seriesSelection!.setX(282 + this.seriesIndex * 230);
+            }
+            if (advance && this.seriesIndex === 1) {
+                this.seriesPanel!.setVisible(false);
+                this.startDialog([{ speaker: 'Gabriella', text: 'Bora.' }], () => {
+                    this.state = 'pause';
+                    this.time.delayedCall(1800, () => this.startDialog(script.seriesWatch, () =>
+                        this.changeStage(() => {
+                            this.sofaCouple?.destroy(); this.seriesPanel?.destroy();
+                            this.setupEveryday();
+                        })));
+                });
+            }
+        }
         else if (this.state === 'dialog' && advance)
         {
             if (this.isTyping)
@@ -191,6 +217,13 @@ export class Routine extends Phaser.Scene
                 if (pause)
                 {
                     this.state = 'pause';
+                    if (this.stage === 'series') {
+                        this.dialog.setVisible(false);
+                        if (this.activeLines[this.lineIndex].laughAfter) {
+                            this.tweens.add({ targets: this.sofaCouple, y: '-=3', duration: 120,
+                                yoyo: true, repeat: 2, ease: 'Sine.InOut' });
+                        }
+                    }
                     this.time.delayedCall(pause, () => { this.state = 'dialog'; this.nextLine(); });
                 }
                 else this.nextLine();
@@ -249,7 +282,13 @@ export class Routine extends Phaser.Scene
             setup();
             const nextState = this.stage === 'choice' ? 'select' : 'explore';
             this.state = 'transition';
-            this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => { this.state = nextState; });
+            this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
+                if (this.stage === 'series') {
+                    this.tweens.add({ targets: this.sofaCouple, alpha: 1, duration: 600,
+                        onComplete: () => this.startDialog(script.seriesIntro, () => this.showSeriesSelection()) });
+                }
+                else this.state = nextState;
+            });
             this.cameras.main.fadeIn(900, 30, 36, 56);
         });
         this.cameras.main.fadeOut(900, 30, 36, 56);
@@ -322,8 +361,41 @@ export class Routine extends Phaser.Scene
             this.feedback.setVisible(false).setPosition(512, 110);
             this.shade.setVisible(false);
             this.choices.setVisible(false);
-            this.setupEveryday();
+            this.setupSeries();
         }));
+    }
+
+    private setupSeries ()
+    {
+        this.stage = 'series';
+        this.background.setTexture('routine-series').setDisplaySize(this.scale.width, this.scale.height);
+        this.lucas.setVisible(false); this.gabriella.setVisible(false);
+        this.hud.setVisible(false);
+        // Alinhado ao sofá esquerdo, deixando a televisão livre à direita.
+        this.sofaCouple = this.add.image(325, 565, 'couple-sofa-series').setOrigin(0.5, 1).setDepth(20).setAlpha(0);
+        this.sofaCouple.setScale(530 / this.sofaCouple.width);
+    }
+
+    private showSeriesSelection ()
+    {
+        this.seriesIndex = 0;
+        const panel = this.add.image(512, 320, 'series-selection-panel').setDisplaySize(820, 448);
+        const interior = this.add.rectangle(512, 350, 760, 325, 0x39435F);
+        const title = this.add.text(512, 150, 'O que vamos assistir?', {
+            fontFamily: 'Arial', fontSize: '23px', color: '#F4EBDD'
+        }).setOrigin(0.5);
+        this.seriesSelection = this.add.rectangle(282, 330, 216, 192, 0x1E2438)
+            .setStrokeStyle(3, 0xD8B36A);
+        this.seriesPanel = this.add.container(0, 0, [panel, interior, title, this.seriesSelection]).setDepth(110);
+        ['Série 1', 'Casamento\nàs Cegas', 'Série 3'].forEach((text, index) => {
+            this.seriesPanel!.add(this.add.text(282 + index * 230, 330, text, {
+                fontFamily: 'Arial', fontSize: '23px', color: '#F4EBDD', align: 'center'
+            }).setOrigin(0.5));
+        });
+        this.seriesPanel.add(this.add.text(512, 470, '← / → para escolher • E para assistir Casamento às Cegas', {
+            fontFamily: 'Arial', fontSize: '18px', color: '#F4EBDD'
+        }).setOrigin(0.5));
+        this.state = 'seriesSelect';
     }
 
     private startDialog (lines: RoutineLine[], afterDialog: () => void)
@@ -346,6 +418,7 @@ export class Routine extends Phaser.Scene
 
     private showLine ()
     {
+        this.dialog.setVisible(true);
         const line = this.activeLines[this.lineIndex];
         this.dialogName.setText(line.speaker);
         this.portrait.setVisible(!!line.portrait);
