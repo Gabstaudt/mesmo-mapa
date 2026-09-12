@@ -7,7 +7,7 @@ const chapters = [
     { scene: 'FirstMeeting', title: 'Primeiro encontro', subtitle: 'Finalmente' },
     { scene: 'Cinema', title: 'Cinema', subtitle: 'Só um cinema' },
     { scene: 'Parents', title: 'Conhecendo os pais', subtitle: 'Mais perto' },
-    { scene: 'Routine', title: 'Rotina', subtitle: 'As quatro microcenas' },
+    { scene: 'Routine', title: 'Rotina', subtitle: 'As cinco microcenas' },
     { scene: 'Maturity', title: 'Amadurecimento', subtitle: 'No mesmo lado' },
     { scene: 'Sports', title: 'Esportes', subtitle: 'Valendo Nada' },
     { scene: 'TacticalCoop', title: 'Cooperação', subtitle: 'Dupla Fechada' },

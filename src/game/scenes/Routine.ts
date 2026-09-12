@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { routineDialogues as script, type RoutineLine } from '../data/routineDialogues';
 
-type Stage = 'ready' | 'choice' | 'series' | 'everyday';
+type Stage = 'ready' | 'choice' | 'moinho' | 'series' | 'everyday';
 type State = 'transition' | 'explore' | 'select' | 'seriesSelect' | 'dialog' | 'pause' | 'card';
 type Point = { id: string; label: string; image: Phaser.GameObjects.Image; x: number; y: number;
     lines: RoutineLine[]; marker: Phaser.GameObjects.Text };
@@ -175,7 +175,13 @@ export class Routine extends Phaser.Scene
                 // A fotografia desacelera o clima sem alterar o ritmo dos controles.
                 if (this.stage === 'everyday' && point.id === 'photo') this.music.setVolume(0.025);
                 this.shade.setVisible(this.stage === 'everyday' && point.id === 'photo');
-                this.startDialog(point.lines, () => this.collectPoint(point));
+                if (this.stage === 'moinho') {
+                    this.hud.setVisible(false);
+                    point.marker.setVisible(false);
+                    this.lucas.setTexture('lucas-front').setFlipX(false);
+                    this.startDialog(point.lines, () => this.changeStage(() => this.setupSeries()));
+                }
+                else this.startDialog(point.lines, () => this.collectPoint(point));
             }
         }
         else if (this.state === 'select')
@@ -217,10 +223,14 @@ export class Routine extends Phaser.Scene
                 if (pause)
                 {
                     this.state = 'pause';
-                    if (this.stage === 'series') {
+                    if (this.stage === 'series' || this.activeLines[this.lineIndex].laughAfter || this.stage === 'moinho') {
                         this.dialog.setVisible(false);
+                        this.portrait.setVisible(false);
                         if (this.activeLines[this.lineIndex].laughAfter) {
-                            this.tweens.add({ targets: this.sofaCouple, y: '-=3', duration: 120,
+                            const who = this.activeLines[this.lineIndex].laughWho;
+                            const targets = this.stage === 'series' ? [this.sofaCouple!] :
+                                who === 'Lucas' ? [this.lucas] : who === 'Gabriella' ? [this.gabriella] : [this.lucas, this.gabriella];
+                            this.tweens.add({ targets, y: '-=3', duration: 120,
                                 yoyo: true, repeat: 2, ease: 'Sine.InOut' });
                         }
                     }
@@ -287,7 +297,12 @@ export class Routine extends Phaser.Scene
                     this.tweens.add({ targets: this.sofaCouple, alpha: 1, duration: 600,
                         onComplete: () => this.startDialog(script.seriesIntro, () => this.showSeriesSelection()) });
                 }
-                else this.state = nextState;
+                else {
+                    this.state = nextState;
+                    if (this.stage === 'moinho') this.time.delayedCall(2600, () => {
+                        if (this.stage === 'moinho') this.hud.setVisible(false);
+                    });
+                }
             });
             this.cameras.main.fadeIn(900, 30, 36, 56);
         });
@@ -335,7 +350,7 @@ export class Routine extends Phaser.Scene
         this.choices.setVisible(false);
         if (index === 3)
         {
-            this.startDialog(script.anywhere, () => this.showMeal());
+            this.startDialog(script.moinhoDecision, () => this.changeStage(() => this.setupMoinho()));
             return;
         }
         this.startDialog([script.burger, script.pizza, script.restaurant][index], () => {
@@ -348,21 +363,18 @@ export class Routine extends Phaser.Scene
         });
     }
 
-    private showMeal ()
+    private setupMoinho ()
     {
-        this.state = 'pause';
-        this.shade.setVisible(true);
-        this.hud.setVisible(false);
-        const food = this.add.image(512, 335, 'routine-food').setDepth(100);
-        food.setScale(430 / food.width);
-        this.feedback.setPosition(512, 545).setText('Decisão concluída.\nTempo gasto escolhendo: desnecessário.').setVisible(true);
-        this.time.delayedCall(2400, () => this.changeStage(() => {
-            food.destroy();
-            this.feedback.setVisible(false).setPosition(512, 110);
-            this.shade.setVisible(false);
-            this.choices.setVisible(false);
-            this.setupSeries();
-        }));
+        this.stage = 'moinho';
+        this.visited.clear();
+        this.background.setTexture('routine-moinho').setDisplaySize(this.scale.width, this.scale.height);
+        this.choices.setVisible(false); this.feedback.setVisible(false); this.shade.setVisible(false);
+        this.hud.setText('VELHO MOINHO').setVisible(true);
+        this.physics.world.setBounds(300, 630, 475, 110);
+        this.lucas.setPosition(335, 720).setTexture('lucas-front').setFlipX(false).setVisible(true);
+        this.gabriella.setPosition(720, 670).setVisible(true);
+        // A mesa fica junto ao corredor; o ponto de interação está no chão à frente dela.
+        this.addPoint('moinho-table', 'Nossa mesa', 'velho-moinho-table', 620, 545, 650, 580, 675, script.moinho);
     }
 
     private setupSeries ()
