@@ -64,7 +64,7 @@ export class Concert extends Phaser.Scene
         this.background = this.add.image(512, 384, 'concert-crowd').setDisplaySize(1024, 768);
         this.lighting = this.add.rectangle(512, 384, 1024, 768, 0xC9828A, 0).setDepth(1);
         ['lucas', 'gabriella'].forEach((name, i) => this.players.push(
-            this.add.image(i === 0 ? 400 : 490, 652, `${name}-front`).setOrigin(0.5, 1).setScale(0.11).setDepth(20)
+            this.add.image(i === 0 ? 400 : 490, 652, `${name}-front`).setOrigin(0.5, 1).setScale(0.20).setDepth(20)
         ));
         this.ticket = this.add.image(315, 624, 'concert-ticket').setScale(0.16).setDepth(25);
         this.photo = this.add.image(512, 292, 'concert-photo').setScale(0.55).setDepth(90).setVisible(false);
@@ -86,7 +86,7 @@ export class Concert extends Phaser.Scene
         this.dialog = this.add.container(0, 0, [box, this.dialogText, this.dialogName]).setDepth(200).setVisible(false);
         this.portrait = this.add.image(145, 528, 'lucas-portrait').setScale(0.22).setDepth(150).setVisible(false);
         this.keys = this.input.keyboard!.addKeys('W,A,S,D,E,ENTER') as Record<string, Phaser.Input.Keyboard.Key>;
-        this.music = this.sound.add('concert-groove', { loop: true, volume: 0.08 }) as Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound;
+        this.music = this.sound.add('concert-song', { loop: true, volume: 0.08 }) as Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound;
         this.music.play();
         this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => { this.state = 'explore'; });
         this.cameras.main.fadeIn(900, 30, 36, 56);
@@ -189,7 +189,7 @@ export class Concert extends Phaser.Scene
     {
         this.state = 'rhythm'; this.block = block; this.elapsed = 0; this.blockMissed = false; this.combo = 0;
         this.notesLayer.removeAll(true);
-        // Quatro pulsos de preparação; notas alinhadas à base original de 96 BPM.
+        // Quatro pulsos de preparação; o desafio mantém seu tempo próprio de 96 BPM.
         const pattern = block === 0 ? [[0], [0], [0], [0]] : block === 1 ?
             [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [0, 1]] : block === 2 ?
             [[0], [1], [0, 1], [0, 1]] :
@@ -204,7 +204,7 @@ export class Concert extends Phaser.Scene
         this.feedback.setText(block === 0 ? 'Lucas começa • E' : 'No mesmo ritmo');
         this.hint.setText(block === 0 ? 'E — Bata no ritmo • ENTER entra depois' : 'E + ENTER • Cada um acompanha a sua nota').setVisible(true);
         this.players[0].setPosition(190, 730); this.players[1].setPosition(834, 730);
-        this.music?.stop(); this.music?.play({ loop: true, volume: 0.22 });
+        this.music?.setVolume(0.22);
         this.updateSync();
     }
 

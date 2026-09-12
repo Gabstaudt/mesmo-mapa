@@ -97,7 +97,7 @@ export class Game extends Phaser.Scene
             'gabriella-front'
         );
 
-        this.lucas.setScale(0.25);
+        this.lucas.setScale(0.27);
         this.gabriella.setScale(0.25);
 
         this.lucas.setCollideWorldBounds(true);
@@ -204,7 +204,7 @@ export class Game extends Phaser.Scene
 
     update ()
     {
-        const speed = 220;
+        const speed = 280;
         const interact = Phaser.Input.Keyboard.JustDown(this.interactKey);
 
         // -------------------------

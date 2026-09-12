@@ -88,7 +88,7 @@ export class Finale extends Phaser.Scene
         this.portrait = this.add.image(145, 528, 'lucas-romantic').setScale(0.22).setDepth(150).setVisible(false);
         this.couple = this.add.image(512, 300, 'couple-key-art').setScale(0.34).setDepth(140).setVisible(false);
         this.keys = this.input.keyboard!.addKeys('W,A,S,D,E,UP,LEFT,DOWN,RIGHT,ENTER') as Record<string, Phaser.Input.Keyboard.Key>;
-        this.music = this.sound.add('shared-path-ambient', { loop: true, volume: 0.075 }) as Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound;
+        this.music = this.sound.add('finale-song', { loop: true, volume: 0.075 }) as Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound;
         this.music.play(); this.createWall();
         this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
             this.time.delayedCall(700, () => this.revealWall());

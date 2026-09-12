@@ -98,18 +98,18 @@ export class Parents extends Phaser.Scene
         // A porta isolada compõe a entrada; a sala só é revelada após o primeiro diálogo.
         const wall = this.add.rectangle(width / 2, height / 2, width, height, 0x39435F);
         const floor = this.add.rectangle(width / 2, height * 0.85, width, height * 0.30, 0x1E2438);
-        this.door = this.add.image(width * 0.62, height * 0.70, 'parents-front-door').setOrigin(0.5, 1);
+        this.door = this.add.image(width * 0.62, height * 0.75, 'parents-front-door').setOrigin(0.5, 1);
         this.door.setScale(500 / this.door.height);
         this.entrance = this.add.container(0, 0, [wall, floor, this.door]);
 
         this.physics.world.setBounds(55, height * 0.69, width - 110, height * 0.28);
         this.lucas = this.physics.add.image(width * 0.32, height * 0.81, 'lucas-front')
-            .setOrigin(0.5, 1).setScale(0.16).setDepth(20);
+            .setOrigin(0.5, 1).setScale(0.32).setDepth(20);
         this.lucas.body!.setSize(180, 80);
         this.lucas.body!.setOffset((this.lucas.width - 180) / 2, this.lucas.height - 80);
         this.lucas.setCollideWorldBounds(true);
         this.gabriella = this.add.image(width * 0.52, height * 0.92, 'gabriella-front')
-            .setOrigin(0.5, 1).setScale(0.16).setDepth(20).setVisible(false);
+            .setOrigin(0.5, 1).setScale(0.30).setDepth(20).setVisible(false);
         this.keepsake = this.add.image(width * 0.84, height * 0.79, 'parents-living-room-object')
             .setOrigin(0.5, 1).setVisible(false);
         this.keepsake.setScale(160 / this.keepsake.width);

@@ -88,19 +88,19 @@ export class FirstMeeting extends Phaser.Scene
         // Faixa de chão livre à frente dos móveis. A posição dos sprites marca os pés.
         this.physics.world.setBounds(55, height * 0.77, width - 110, height * 0.21);
         this.lucas = this.physics.add.image(width * 0.72, height * 0.88, 'lucas-front')
-            .setOrigin(0.5, 1).setScale(0.16).setDepth(20);
+            .setOrigin(0.5, 1).setScale(0.30).setDepth(20);
         this.lucas.body!.setSize(180, 80);
         this.lucas.body!.setOffset((this.lucas.width - 180) / 2, this.lucas.height - 80);
         this.lucas.setCollideWorldBounds(true);
-        this.gabriella = this.add.image(width * 0.20, height * 0.88, 'gabriella-front')
-            .setOrigin(0.5, 1).setScale(0.16).setDepth(20).setVisible(false);
+        this.gabriella = this.add.image(width * 0.20, height * 0.95, 'gabriella-front')
+            .setOrigin(0.5, 1).setScale(0.28).setDepth(20).setVisible(false);
         this.arrivalNotice = this.add.text(width / 2, 60, 'Gabriella chegou.', {
             fontFamily: 'Arial', fontSize: '24px', color: '#F4EBDD',
             backgroundColor: '#1E2438', padding: { x: 18, y: 10 }
         }).setOrigin(0.5).setDepth(100).setVisible(false);
 
         // Mantém a proporção original do asset sobre a mesa lateral direita.
-        this.keepsake = this.add.image(width * 0.84, height * 0.55, 'first-meeting-object');
+        this.keepsake = this.add.image(width * 0.84, height * 0.49, 'first-meeting-object');
         this.keepsake.setScale(170 / this.keepsake.width);
         this.portrait = this.add.image(145, height - 240, 'gabriella-portrait')
             .setScale(0.22).setDepth(150).setVisible(false);

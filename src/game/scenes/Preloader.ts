@@ -61,7 +61,8 @@ export class Preloader extends Scene
         this.load.image('concert-photo', 'assets/objects/concert-memory-photo.png');
         this.load.image('rhythm-note', 'assets/ui/rhythm-note.png');
         this.load.image('rhythm-hit-zone', 'assets/ui/rhythm-hit-zone.png');
-        this.load.audio('concert-groove', 'assets/audio/concert-groove.wav');
+        this.load.audio('concert-song', 'assets/audios/FalaBaixinho.mp3');
+        this.load.audio('finale-song', 'assets/audios/IRIS.mp3');
         this.load.image('tactical-background', 'assets/scenes/tactical/tactical-background.png');
         this.load.image('tactical-objective-panel', 'assets/ui/tactical-objective-panel.png');
         this.load.image('tactical-finish-zone', 'assets/objects/tactical-finish-zone.png .png');

@@ -114,7 +114,15 @@ export class SantaCatarina extends Phaser.Scene
         const playable = ['airport', 'family', 'baptism', 'paraguay', 'falls'].includes(stage);
         this.lucas.setVisible(playable || stage === 'sleep').setTexture('lucas-front').setFlipX(false);
         this.gabriella.setVisible(playable || stage === 'sleep').setTexture('gabriella-front').setFlipX(false);
-        this.lucas.setScale(stage === 'falls' ? 0.075 : 0.10); this.gabriella.setScale(stage === 'falls' ? 0.075 : 0.10);
+        const characterScales: Partial<Record<Stage, [number, number]>> = {
+            family: [0.30, 0.28],
+            sleep: [0.30, 0.28],
+            paraguay: [0.23, 0.21],
+            falls: [0.20, 0.18]
+        };
+        const [lucasScale, gabriellaScale] = characterScales[stage] ?? [0.10, 0.10];
+        this.lucas.setScale(lucasScale);
+        this.gabriella.setScale(gabriellaScale);
         const positions: Partial<Record<Stage, number[]>> = { airport: [420, 690, 475, 695], family: [130, 720, 410, 720],
             baptism: [365, 710, 420, 715], sleep: [795, 705, 875, 710], paraguay: [300, 700, 350, 708], falls: [940, 580, 895, 570] };
         const position = positions[stage];

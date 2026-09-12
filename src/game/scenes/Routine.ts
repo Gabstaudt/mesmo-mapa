@@ -63,12 +63,12 @@ export class Routine extends Phaser.Scene
         this.typingEvent = undefined;
         this.background = this.add.image(width / 2, height / 2, 'routine-ready').setDisplaySize(width, height);
         this.lucas = this.physics.add.image(width * 0.68, height * 0.87, 'lucas-front')
-            .setOrigin(0.5, 1).setScale(0.16).setDepth(20);
+            .setOrigin(0.5, 1).setScale(0.30).setDepth(20);
         this.lucas.body!.setSize(180, 80);
         this.lucas.body!.setOffset((this.lucas.width - 180) / 2, this.lucas.height - 80);
         this.lucas.setCollideWorldBounds(true);
         this.gabriella = this.add.image(width * 0.84, height * 0.84, 'gabriella-front')
-            .setOrigin(0.5, 1).setScale(0.16).setDepth(20).setVisible(false);
+            .setOrigin(0.5, 1).setScale(0.28).setDepth(20).setVisible(false);
         this.shade = this.add.rectangle(width / 2, height / 2, width, height, 0x1E2438, 0.3)
             .setDepth(90).setVisible(false);
         this.hud = this.add.text(28, 25, '', { fontFamily: 'Arial', fontSize: '22px',
@@ -107,15 +107,19 @@ export class Routine extends Phaser.Scene
         image.setScale(displayWidth / image.width);
         const marker = this.add.text(targetX, targetY - 50, label, { fontFamily: 'Arial', fontSize: '18px',
             color: '#F4EBDD', backgroundColor: '#1E2438', padding: { x: 7, y: 4 } }).setOrigin(0.5).setDepth(25);
+        if (id === 'mirror') {
+            image.setFlipX(true);
+            marker.setPosition(image.x, image.y + image.displayHeight / 2 + 10).setOrigin(0.5, 0);
+        }
         this.points.push({ id, label, image, x: targetX, y: targetY, lines, marker });
     }
 
     private setupReady ()
     {
         this.physics.world.setBounds(70, 560, 884, 180);
-        this.addPoint('clock', 'Relógio', 'routine-clock', 720, 145, 175, 720, 585, script.clock);
-        this.addPoint('phone', 'Celular', 'routine-phone', 235, 665, 140, 320, 700, script.waitingPhone);
-        this.addPoint('mirror', 'Espelho', 'routine-mirror', 500, 480, 230, 510, 625, script.mirror);
+        this.addPoint('clock', 'Relógio', 'routine-clock', 660, 110, 175, 720, 585, script.clock);
+        this.addPoint('phone', 'Celular', 'routine-phone', 240, 670, 140, 320, 700, script.waitingPhone);
+        this.addPoint('mirror', 'Espelho', 'routine-mirror', 950, 420, 400, 920, 625, script.mirror);
         this.updateCounter();
     }
 

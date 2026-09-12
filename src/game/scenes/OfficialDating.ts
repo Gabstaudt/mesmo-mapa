@@ -46,8 +46,8 @@ export class OfficialDating extends Phaser.Scene
         this.world.add(this.add.image(512, 384, 'official-background').setDisplaySize(1024, 768));
         this.note = this.add.image(376, 558, 'official-note').setScale(0.12);
         this.ring = this.add.image(133, 553, 'official-ring').setScale(0.085).setAlpha(0.45);
-        this.lucas = this.add.image(250, 720, 'lucas-front').setOrigin(0.5, 1).setScale(0.12);
-        this.gabriella = this.add.image(700, 620, 'gabriella-front').setOrigin(0.5, 1).setScale(0.12);
+        this.lucas = this.add.image(250, 720, 'lucas-front').setOrigin(0.5, 1).setScale(0.30);
+        this.gabriella = this.add.image(700, 620, 'gabriella-front').setOrigin(0.5, 1).setScale(0.29);
         this.world.add([this.note, this.ring, this.gabriella, this.lucas]);
         this.objective = this.label(512, 75, '', 21).setDepth(100);
         this.hint = this.label(512, 740, 'WASD — Caminhar', 18).setDepth(110);
