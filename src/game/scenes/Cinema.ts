@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 
-type Line = { speaker: 'Narrador' | 'Gabriella' | 'Lucas'; text: string; portrait?: string; pauseAfter?: number };
+type Line = { speaker: 'Narrador' | 'Gabriella' | 'Lucas'; text: string; portrait?: string; pauseAfter?: number; lightsUp?: boolean };
 type CinemaState = 'transition' | 'lobby' | 'dialog' | 'pause' | 'checkpoint' | 'memory';
 
 // Roteiro fornecido por Gabriella; dramatização do jogo, não uma transcrição real.
@@ -40,32 +40,48 @@ const conversations: Record<'intro' | 'ticket' | 'popcorn' | 'beforeRoom' | 'roo
         { speaker: 'Gabriella', text: 'Não.', portrait: 'gabriella-portrait' },
     ],
     room: [
-        { speaker: 'Narrador', text: 'As luzes apagaram.' },
-        { speaker: 'Narrador', text: 'E, pela primeira vez naquela noite, Gabriella ficou quieta.', pauseAfter: 1000 },
-        { speaker: 'Lucas', text: 'Milagre.', portrait: 'lucas-portrait' },
-        { speaker: 'Gabriella', text: 'Eu ouvi.', portrait: 'gabriella-portrait' },
-        { speaker: 'Lucas', text: 'Era pra ouvir.', portrait: 'lucas-portrait' },
-        { speaker: 'Gabriella', text: 'Me dá.', portrait: 'gabriella-portrait' },
-        { speaker: 'Lucas', text: 'Tem do teu lado.', portrait: 'lucas-portrait' },
-        { speaker: 'Gabriella', text: 'Quero essa.', portrait: 'gabriella-portrait' },
+        { speaker: 'Narrador', text: 'Primeiro cinema juntos.' },
+        { speaker: 'Narrador', text: 'Animais Fantásticos: Os Segredos de Dumbledore.', pauseAfter: 1000 },
+        { speaker: 'Gabriella', text: 'Eu quero pipoca.', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Eu sabia.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Como assim?', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Você falou disso lá fora.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'E continuo querendo.', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Tá aqui.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Obrigada, amor.', portrait: 'gabriella-portrait', pauseAfter: 3000 },
+        { speaker: 'Gabriella', text: 'Tu entendeu isso?', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Mais ou menos.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Eu também não.', portrait: 'gabriella-portrait', pauseAfter: 1000 },
+        { speaker: 'Gabriella', text: 'Depois tu me explica.', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Mas eu acabei de falar que não entendi.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Tu dá teu jeito.', portrait: 'gabriella-portrait', pauseAfter: 2500 },
+        { speaker: 'Gabriella', text: 'Amor.', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Hum?', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Me dá mais pipoca.', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Tá na tua mão.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Mas eu quero daí.', portrait: 'gabriella-portrait' },
         { speaker: 'Lucas', text: 'É a mesma pipoca.', portrait: 'lucas-portrait' },
-        { speaker: 'Gabriella', text: 'Não é.', portrait: 'gabriella-portrait' },
-        { speaker: 'Lucas', text: 'Como não?', portrait: 'lucas-portrait' },
-        { speaker: 'Gabriella', text: 'Essa é melhor.', portrait: 'gabriella-portrait', pauseAfter: 1600 },
-        { speaker: 'Narrador', text: 'O filme continuava.' },
-        { speaker: 'Narrador', text: 'Mas algumas memórias não ficam por causa do que estava na tela.' },
-        { speaker: 'Narrador', text: 'Ficam por causa de quem estava sentado do lado.' },
-        { speaker: 'Gabriella', text: 'Tá gostando?', portrait: 'gabriella-romantic' },
-        { speaker: 'Lucas', text: 'Do filme?', portrait: 'lucas-romantic' },
-        { speaker: 'Gabriella', text: 'É.', portrait: 'gabriella-romantic', pauseAfter: 900 },
-        { speaker: 'Lucas', text: 'Também.', portrait: 'lucas-romantic' },
-        { speaker: 'Gabriella', text: 'Também o quê?', portrait: 'gabriella-romantic' },
-        { speaker: 'Lucas', text: 'Nada.', portrait: 'lucas-romantic' },
-        { speaker: 'Gabriella', text: 'Lucas.', portrait: 'gabriella-romantic' },
-        { speaker: 'Lucas', text: 'Assiste o filme.', portrait: 'lucas-romantic' },
-        { speaker: 'Gabriella', text: 'Covarde.', portrait: 'gabriella-romantic' },
-        { speaker: 'Narrador', text: 'Foi só um cinema.', pauseAfter: 1000 },
-        { speaker: 'Narrador', text: 'Só que algumas coisas começam exatamente assim.' },
+        { speaker: 'Gabriella', text: 'Lucas.', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Tá bom.', portrait: 'lucas-portrait', pauseAfter: 2500 },
+        { speaker: 'Lucas', text: 'Tu vai assistir?', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Tô assistindo.', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Você já falou comigo umas cinco vezes.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'E daí?', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Nada.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Eu gosto de comentar.', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Eu percebi.', portrait: 'lucas-portrait', pauseAfter: 2500 },
+        { speaker: 'Gabriella', text: 'Gostou?', portrait: 'gabriella-portrait', lightsUp: true },
+        { speaker: 'Lucas', text: 'Gostei.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Eu também.', portrait: 'gabriella-portrait', pauseAfter: 1000 },
+        { speaker: 'Gabriella', text: 'Mas gostei mais do rolê.', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Também.', portrait: 'lucas-portrait' },
+        { speaker: 'Gabriella', text: 'Vamos de novo outro dia?', portrait: 'gabriella-portrait' },
+        { speaker: 'Lucas', text: 'Vamos.', portrait: 'lucas-portrait' },
+        { speaker: 'Narrador', text: 'Não aconteceu nada extraordinário.' },
+        { speaker: 'Narrador', text: 'Vocês foram ao cinema.' },
+        { speaker: 'Narrador', text: 'Dividiram pipoca.' },
+        { speaker: 'Narrador', text: 'Conversaram mais do que deveriam durante o filme.', pauseAfter: 1200 },
+        { speaker: 'Narrador', text: 'E foi justamente por ser tão simples que virou memória.' },
     ],
 };
 
@@ -227,6 +243,8 @@ export class Cinema extends Phaser.Scene
                 if (pause)
                 {
                     this.state = 'pause';
+                    this.dialog.setVisible(false);
+                    this.portrait.setVisible(false);
                     this.pauseEvent = this.time.delayedCall(pause, () => {
                         this.state = 'dialog';
                         this.nextLine();
@@ -277,6 +295,11 @@ export class Cinema extends Phaser.Scene
     {
         this.typingEvent?.remove(false);
         const line = this.lines[this.lineIndex];
+        this.dialog.setVisible(true);
+        if (line.lightsUp) {
+            const light = this.add.rectangle(512, 384, 1024, 768, 0xF4EBDD, 1).setAlpha(0).setDepth(5);
+            this.tweens.add({ targets: light, alpha: 0.16, duration: 2200, ease: 'Sine.InOut' });
+        }
         this.dialogName.setText(line.speaker);
         this.dialogText.setText('');
         this.portrait.setVisible(!!line.portrait);
@@ -348,7 +371,7 @@ export class Cinema extends Phaser.Scene
             this.add.text(width / 2, height / 2 - 20, 'Só um cinema', {
                 fontFamily: 'Arial', fontSize: '26px', color: '#1E2438', fontStyle: 'bold'
             }).setOrigin(0.5).setDepth(301);
-            this.add.text(width / 2, height / 2 + 30, 'Pelo menos era isso que vocês diziam.', {
+            this.add.text(width / 2, height / 2 + 30, 'Animais Fantásticos, pipoca e mais uma primeira vez juntos.', {
                 fontFamily: 'Arial', fontSize: '20px', color: '#39435F',
                 align: 'center', wordWrap: { width: 420 }
             }).setOrigin(0.5).setDepth(301);
